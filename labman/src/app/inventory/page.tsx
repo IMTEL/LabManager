@@ -1,6 +1,17 @@
 ﻿import prisma from '@/lib/prisma';
+import { validateSessionToken} from "@/auth/session";
+import { cookies } from "next/headers";
+import {redirect} from "next/navigation";
 
 export default async function Inventory() {
+
+    const token = (await cookies()).get("session")?.value;
+    const session = token ? await validateSessionToken(token) : null;
+
+    if (!session) {
+        redirect("/");
+    }
+
     const equipment = await prisma.equipment.findMany();
     console.log(equipment);
 
