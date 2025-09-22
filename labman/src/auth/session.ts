@@ -30,7 +30,7 @@ function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 // Creates a new sessions and stoores it in the database
-export async function createSession(): Promise<SessionWithToken> {
+export async function createSession(userId: number): Promise<SessionWithToken> {
     const now = new Date();
 
     const id = generateSecureRandomString();
@@ -43,7 +43,9 @@ export async function createSession(): Promise<SessionWithToken> {
         data: {
             id,
             secretHash: Buffer.from(secretHash),
-            createdAt: now
+            createdAt: now,
+            userId: userId,
+
         }
     });
 

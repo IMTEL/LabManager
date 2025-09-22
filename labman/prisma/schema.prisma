@@ -39,4 +39,15 @@ model Session {
   id String @id
   secretHash Bytes
   createdAt DateTime @default(now())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  password  String
+  username      String @unique
+  createdAt DateTime @default(now())
+  latestActivity DateTime @default(now())
+  sessions  Session[]
 }
