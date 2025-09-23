@@ -45,7 +45,7 @@ model Session {
 
 model User {
   id        Int      @id @default(autoincrement())
-  password  String
+  hashedPassword  String
   username      String @unique
   createdAt DateTime @default(now())
   latestActivity DateTime @default(now())

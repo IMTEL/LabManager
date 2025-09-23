@@ -13,7 +13,6 @@ export default async function Inventory() {
     }
 
     const equipment = await prisma.equipment.findMany();
-    console.log(equipment);
 
     async function addEquipment(formData : FormData) {
         "use server"
