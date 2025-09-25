@@ -1,36 +1,29 @@
-﻿"use client"
+﻿import AddUser from "@/components/users/AddUser";
+import Card from "@/components/core/Card";
 import prisma from "@/lib/prisma";
-import {useState} from "react";
+import {cookies} from "next/headers";
+import {validateSessionToken} from "@/auth/session";
+import {redirect} from "next/navigation";
 
-export default function Users() {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        const res = await fetch("/api/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username,
-                password
-            })
-        });
 
-        if (res.ok) {
-            alert("User created successfully");
-        }
+export default async function Users() {
+    const token = (await cookies()).get("session")?.value;
+    const session = token ? await validateSessionToken(token) : null;
+
+    if (!session) {
+        redirect("/");
     }
+    const users = await prisma.user.findMany();
+    console.log(users);
+    console.log(users[0].latestActivity.toLocaleDateString());
     return(
         <div>
-            <form onSubmit={handleSubmit}>
-                <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name="username" placeholder="Username" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password" placeholder="Password" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                <button type="submit">Add User</button>
+            <AddUser />
+            {users.map((user) => (
+                <Card key={user.id} type="Test" name={user.username} start={user.createdAt.toLocaleDateString()} latestActivity={user.latestActivity.toLocaleDateString()} />
+            ))}
 
-            </form>
         </div>
     )
 }

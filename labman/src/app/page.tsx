@@ -37,7 +37,7 @@ export default function Home() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 pt-4">
             <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name="username" placeholder="Username" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
             <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password" placeholder="Password" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-            <button type="submit" className="bg-blue-500 text-white rounded-md p-2 m-2">Login</button>
+            <button type="submit" className="bg-green-500 text-black rounded-md p-2 m-2">Login</button>
           </form>
         </div>
 
