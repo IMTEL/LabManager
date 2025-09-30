@@ -12,7 +12,7 @@ export default async function Users() {
     const session = token ? await validateSessionToken(token) : null;
 
     if (!session) {
-        redirect("/");
+        redirect("/login");
     }
     const users = await prisma.user.findMany();
     console.log(users);

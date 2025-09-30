@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
     const token = (await cookies()).get("session")?.value;
 
     if (!token) {
-        return Response.redirect(new URL("/", req.url));
+        return Response.redirect(new URL("/login", req.url));
     }
 
    /* const session = await validateSessionToken(token);
@@ -22,4 +22,4 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
 }
 
-export const config = {matcher: ["/inventory", "/users"]};
+export const config = {matcher: ["/", "/users"]};

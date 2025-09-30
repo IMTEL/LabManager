@@ -1,48 +1,51 @@
-"use client"
+﻿import prisma from '@/lib/prisma';
+import { validateSessionToken} from "@/auth/session";
+import { cookies } from "next/headers";
+import {redirect} from "next/navigation";
 
-import prisma from '@/lib/prisma';
-import "./globals.css";
-import { useState } from "react";
+export default async function Inventory() {
 
-export default function Home() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+    const token = (await cookies()).get("session")?.value;
+    const session = token ? await validateSessionToken(token) : null;
 
-  async function handleSubmit(e: React.FormEvent) {
-      e.preventDefault();
-      const res = await fetch("/api/login", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-              username,
-              password
-          })
-      });
+    if (!session) {
+        redirect("/login");
+    }
 
-      if (res.ok) {
-          window.location.href = "/inventory";
-      } else {
-          alert("Invalid username or password");
-      }
+    const equipment = await prisma.equipment.findMany();
 
+    async function addEquipment(formData : FormData) {
+        "use server"
+        const name = formData.get("name") as string;
+        const category = formData.get("category") as string;
+        const image = formData.get("image") as string;
+        const quantity = formData.get("quantity");
+        const available = formData.get("available");
 
-  }
-  return (
-      <div className="mx-auto w-fit">
-        <h1 className="mx-auto w-fit font-bold text-6xl my-8">VR Lab Management</h1>
-        <div className="my-80">
-          <h1 className="font-bold text-5xl mx-auto w-fit">Login</h1>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5 pt-4">
-            <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name="username" placeholder="Username" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password" placeholder="Password" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-            <button type="submit" className="bg-green-500 text-black rounded-md p-2 m-2">Login</button>
-          </form>
+        await prisma.equipment.create({
+            data: {
+                name,
+                category,
+                image,
+                quantity: Number(quantity),
+                available: Number(available)
+            }
+        });
+
+    }
+    return (
+        <div>
+            <h1>{equipment[0].name}</h1>
+            <form action={addEquipment}>
+                <input type="text" name="name" placeholder="Name" />
+                <input type="text" name="category" placeholder="Category" />
+                <input type="text" name="image" placeholder="Image" />
+                <input type="number" name="quantity" placeholder="Quantity" />
+                <input type="number" name="available" placeholder="Available" />
+                <button type="submit">Add Equipment</button>
+
+            </form>
         </div>
 
-      </div>
-
-
-  );
+    );
 }
