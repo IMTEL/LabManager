@@ -99,7 +99,7 @@ async function getSession(sessionId: string): Promise<Session | null> {
     return sessionRecord;
 }
 
-async function deleteSession(sessionId: string): Promise<void> {
+export async function deleteSession(sessionId: string): Promise<void> {
     await prisma.session.delete({
         where: { id: sessionId },
     });

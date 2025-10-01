@@ -1,9 +1,11 @@
 ﻿"use client"
 import { useState } from "react";
+import {useRouter} from "next/navigation";
 
 export default function AddUser() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const router = useRouter();
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -20,6 +22,11 @@ export default function AddUser() {
 
         if (res.ok) {
             alert("User created successfully");
+            setUsername("");
+            setPassword("");
+            router.refresh();
+        } else {
+            alert("Failed to create user");
         }
     }
     return(

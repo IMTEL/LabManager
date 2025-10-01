@@ -16,14 +16,12 @@ export default async function Users() {
     }
     const users = await prisma.user.findMany();
     console.log(users);
-    console.log(users[0].latestActivity.toLocaleDateString());
     return(
         <div>
             <AddUser />
             {users.map((user) => (
                 <Card key={user.id} type="Test" name={user.username} start={user.createdAt.toLocaleDateString()} latestActivity={user.latestActivity.toLocaleDateString()} />
             ))}
-
         </div>
     )
 }
