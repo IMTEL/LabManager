@@ -21,7 +21,6 @@ export default function AddUser() {
         });
 
         if (res.ok) {
-            alert("User created successfully");
             setUsername("");
             setPassword("");
             router.refresh();

@@ -19,9 +19,11 @@ export default async function Users() {
     return(
         <div>
             <AddUser />
-            {users.map((user) => (
-                <Card key={user.id} type="Test" name={user.username} start={user.createdAt.toLocaleDateString()} latestActivity={user.latestActivity.toLocaleDateString()} />
-            ))}
+            <div className=" ml-5 mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {users.map((user) => (
+                    <Card key={user.id} type="Test" name={user.username} start={user.createdAt.toLocaleDateString()} latestActivity={user.latestActivity.toLocaleDateString()} />
+                ))}
+            </div>
         </div>
     )
 }
