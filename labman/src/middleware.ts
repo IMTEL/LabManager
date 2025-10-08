@@ -4,7 +4,7 @@ import {cookies} from "next/headers";
 // import {validateSessionToken} from "@/auth/session";
 
 export async function middleware(req: NextRequest) {
-    console.log("middleware hit:", req.url);
+
     const token = (await cookies()).get("session")?.value;
 
     if (!token) {

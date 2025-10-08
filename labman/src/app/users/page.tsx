@@ -15,7 +15,6 @@ export default async function Users() {
         redirect("/login");
     }
     const users = await prisma.user.findMany();
-    console.log(users);
     return(
         <div>
             <AddUser />

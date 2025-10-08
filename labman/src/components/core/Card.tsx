@@ -21,7 +21,7 @@ export default function Card({ type, name, start, latestActivity}: CardProps) {
                 <h1 className="text-2xl">Latest Activity: {latestActivity}</h1>
             </div>
             <div className="ml-50 mb-3 mt-5">
-                < Button username={name} />
+                < Button type="deleteUser" username={name} />
             </div>
 
         </div>
