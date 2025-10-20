@@ -1,7 +1,7 @@
 "use client"
 
 import prisma from '@/lib/prisma';
-import "../globals.css";
+import "../../(main)/globals.css";
 import { useState } from "react";
 
 export default function Home() {
