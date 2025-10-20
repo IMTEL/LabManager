@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import "../../(main)/globals.css";
 import { League_Spartan } from "next/font/google";
-import NavBar from "@/components/core/NavBar";
-import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
-import {validateSessionToken} from "@/auth/session";
-import {getSession} from "@/lib/actions";
-import SideBar from "@/components/core/SideBar";
 
 const spartan = League_Spartan({
     subsets: ["latin"],
@@ -24,19 +18,6 @@ export default async function LoginLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-    let user;
-    const session = await getSession();
-
-        if (session) {
-            const tSession = await prisma.session.findUnique({
-                where: { id: session.id },
-                include: {
-                    user: true
-                }
-            })
-            user = tSession?.user;
-        }
 
 
   return (
