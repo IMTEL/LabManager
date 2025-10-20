@@ -1,0 +1,32 @@
+@import "../../../node_modules/tailwindcss/dist/lib.d.mts";
+
+
+:root {
+    --background: #5E00E0;
+    --foreground: #FFFFFF;
+    --font-spartan: "Spartan", sans-serif;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+}
+
+@theme {
+    --color-green-500: #34C759;
+
+    --color-brand-950: #2C0078;
+
+    --color-red-600: #ED2015
+}
+
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-spartan), sans-serif;
+}
+
+html {
+    font-family: var(--font-spartan), sans-serif;
+}

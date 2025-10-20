@@ -34,3 +34,20 @@ model Item {
   createdAt DateTime @default(now())
   equipment Equipment @relation(fields: [equipmentId], references: [id])
 }
+
+model Session {
+  id String @id
+  secretHash Bytes
+  createdAt DateTime @default(now())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  hashedPassword  String
+  username      String @unique
+  createdAt DateTime @default(now())
+  latestActivity DateTime @default(now())
+  sessions  Session[]
+}
