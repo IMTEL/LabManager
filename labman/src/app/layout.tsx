@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import {validateSessionToken} from "@/auth/session";
 import {getSession} from "@/lib/actions";
+import SideBar from "@/components/core/SideBar";
 
 const spartan = League_Spartan({
     subsets: ["latin"],
@@ -40,9 +41,20 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={spartan.variable}>
-      <body className="font-spartan">
-        <NavBar username={user?.username ?? null} />
-        {children}
+
+      <body className="font-spartan h-screen">
+
+        <div className="flex h-screen">
+
+            <aside className="w-78 h-screen">
+                < SideBar />
+            </aside>
+
+            <main className="flex-1 overflow-auto">
+                <NavBar username={user?.username ?? null} />
+                {children}
+            </main>
+        </div>
       </body>
     </html>
   );
