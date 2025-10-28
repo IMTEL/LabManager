@@ -2,6 +2,7 @@
 import { validateSessionToken} from "@/auth/session";
 import { cookies } from "next/headers";
 import {redirect} from "next/navigation";
+import EquipmentClient from "@/components/inventory/EquipmentClient";
 
 export default async function Inventory() {
 
@@ -12,39 +13,20 @@ export default async function Inventory() {
         redirect("/login");
     }
 
-    const equipment = await prisma.equipment.findMany();
+    const equipmentList = await prisma.equipment.findMany({
+        include: {
+            category: true
+        }
+    });
+    console.log(equipmentList);
 
-    async function addEquipment(formData : FormData) {
-        "use server"
-        const name = formData.get("name") as string;
-        const category = formData.get("category") as string;
-        const image = formData.get("image") as string;
-        const quantity = formData.get("quantity");
-        const available = formData.get("available");
-
-        await prisma.equipment.create({
-            data: {
-                name,
-                category,
-                image,
-                quantity: Number(quantity),
-                available: Number(available)
-            }
-        });
-
-    }
     return (
-        <div>
-            <h1>{equipment[0].name}</h1>
-            <form action={addEquipment}>
-                <input type="text" name="name" placeholder="Name" />
-                <input type="text" name="category" placeholder="Category" />
-                <input type="text" name="image" placeholder="Image" />
-                <input type="number" name="quantity" placeholder="Quantity" />
-                <input type="number" name="available" placeholder="Available" />
-                <button type="submit">Add Equipment</button>
+        <div className="ml-5 mr-5 mt-5">
 
-            </form>
+
+            <EquipmentClient equipmentList={equipmentList} />
+
+
         </div>
 
     );
