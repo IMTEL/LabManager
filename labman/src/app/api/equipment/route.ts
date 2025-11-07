@@ -13,6 +13,7 @@ export async function POST(req: Request) {
         }
     })
 
+    // Add equipment category if it doesn't exist'
     if (equipmentCategory) {
         console.log("Category exists");
         categoryId = equipmentCategory.id;
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
         categoryId = equipmentCategory.id;
     }
 
-
+   // Add equipment to the database
    const newEquipment = await prisma.equipment.create({
         data: {
             name,

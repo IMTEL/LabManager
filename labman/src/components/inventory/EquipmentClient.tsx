@@ -10,6 +10,9 @@ type Equipment = {
         id: number;
         name: string;
     }
+    items: {
+        id: number;
+    }[]
 }
 
 interface EquipmentClientProps {
@@ -17,14 +20,21 @@ interface EquipmentClientProps {
 }
 
 export default function EquipmentClient(equipmentList: EquipmentClientProps) {
+    // Defining state variables
+    // Equipment and category filters
     const [allEquipment, setAllEquipment] = useState(equipmentList.equipmentList);
     const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>(equipmentList.equipmentList);
     const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-
+    // Equipment form
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [image, setImage] = useState("");
 
+    // Unit selection
+    const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
+    const [loanView, setLoanView] = useState<boolean>(false);
+
+    // Filtering equipment based on selected category
     useEffect(() => {
         if (!selectedFilter) {
             setFilteredEquipment(allEquipment);
@@ -33,6 +43,7 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
         }
     }, [selectedFilter, allEquipment]);
 
+    // Adding equipment to the database based on form input
     async function handleSubmit(e: React.FormEvent) {
         if (!name || !category || !image) return;
         e.preventDefault();
@@ -48,7 +59,7 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
                 image
             })
         })
-
+        // Adding the new equipment to the state
         const newEquipment = await res.json();
 
         setAllEquipment(prev => [...prev, newEquipment]);
@@ -65,14 +76,18 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
                 <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                 <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                 <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                <button type="submit">Add User</button>
-
+                <button type="submit">Add Equipment</button>
             </form>
 
             <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
+
             {filteredEquipment.map((equipment) => (
-                <Item key={equipment.id} name={equipment.name} category={equipment.category.name} />
+                <Item key={equipment.id} name={equipment.name} category={equipment.category.name} units={equipment.items} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />
             ))}
+
+            <h1>Selected Unit: {selectedUnit}</h1>
+            <button onClick={() => setLoanView(!loanView)} >New loan</button>
+            {loanView && <h1>Loan view</h1>}
         </div>
     )
 }
