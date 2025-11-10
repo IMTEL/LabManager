@@ -24,7 +24,7 @@ model EquipmentCategory {
 model Equipment {
   id Int @id @default(autoincrement())
   categoryId Int
-  name String
+  name String @unique
   image String
   createdAt DateTime @default(now())
   items Item[]
@@ -38,7 +38,7 @@ model Item {
   notes String[]
   status String
   createdAt DateTime @default(now())
-  equipment Equipment @relation(fields: [equipmentId], references: [id])
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 }
 
 model Session {

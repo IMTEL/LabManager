@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Item from "@/components/inventory/Item";
 import CategoryButton from "@/components/inventory/CategoryButton";
+import {deleteEquipment} from "@/lib/actions";
 
 type Equipment = {
     id: number;
@@ -20,10 +21,9 @@ interface EquipmentClientProps {
 }
 
 export default function EquipmentClient(equipmentList: EquipmentClientProps) {
-    // Defining state variables
     // Equipment and category filters
     const [allEquipment, setAllEquipment] = useState(equipmentList.equipmentList);
-    const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>(equipmentList.equipmentList);
+    //const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>(equipmentList.equipmentList);
     const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
     // Equipment form
     const [name, setName] = useState("");
@@ -35,13 +35,10 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
     const [loanView, setLoanView] = useState<boolean>(false);
 
     // Filtering equipment based on selected category
-    useEffect(() => {
-        if (!selectedFilter) {
-            setFilteredEquipment(allEquipment);
-        } else {
-            setFilteredEquipment(allEquipment.filter((e) => e.category.name === selectedFilter))
-        }
-    }, [selectedFilter, allEquipment]);
+    const filteredEquipment = selectedFilter
+        ? allEquipment.filter((e) => e.category.name === selectedFilter)
+        : allEquipment;
+
 
     // Adding equipment to the database based on form input
     async function handleSubmit(e: React.FormEvent) {
@@ -69,6 +66,11 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
 
     }
 
+    async function handleDeleteEquipment(name: string) {
+        setAllEquipment(prev => prev.filter(e => e.name !== name));
+        await deleteEquipment(name);
+
+    }
 
     return(
         <div>
@@ -82,7 +84,7 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
             <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
 
             {filteredEquipment.map((equipment) => (
-                <Item key={equipment.id} name={equipment.name} category={equipment.category.name} units={equipment.items} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />
+                <Item key={equipment.id} name={equipment.name} category={equipment.category.name} units={equipment.items} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} deleteEquipment={handleDeleteEquipment} />
             ))}
 
             <h1>Selected Unit: {selectedUnit}</h1>

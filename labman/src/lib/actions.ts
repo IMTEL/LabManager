@@ -50,5 +50,22 @@ export async function logout() {
     if (session) {
         await deleteSession(session.id);
     }
+}
 
+export async function deleteEquipment(name: string) {
+    await prisma.equipment.delete({
+        where: {
+            name: name
+        }
+    })
+    revalidatePath("/");
+}
+
+export async function deleteUnit(id: number) {
+    await prisma.item.delete({
+        where: {
+            id: id
+        }
+    })
+    revalidatePath("/");
 }
