@@ -69,3 +69,26 @@ export async function deleteUnit(id: number) {
     })
     revalidatePath("/");
 }
+
+export async function addUnit(equipmentName: string) {
+
+    const equipment = await prisma.equipment.findUnique({
+        where: {
+            name: equipmentName
+        }
+    })
+
+    if (!equipment) {alert("Equipment not found"); return}
+
+    const newUnit = await prisma.item.create({
+        data: {
+            equipmentId: equipment.id,
+            status: "Available",
+
+        }
+
+    })
+    revalidatePath("/");
+    console.log("Added unit");
+    return newUnit;
+}

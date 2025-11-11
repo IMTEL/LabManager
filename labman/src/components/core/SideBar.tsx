@@ -11,8 +11,6 @@ export default function SideBar() {
 
     const currentPath = usePathname();
 
-    console.log(currentPath);
-
     return(
         <div className="bg-brand-950 h-screen">
             <div className="border-b-white border-b-[1px]">

@@ -2,11 +2,16 @@
 
 import Button from "@/components/core/Button";
 import {useEffect, useState} from "react";
-import {deleteUnit} from "@/lib/actions";
+import {addUnit, deleteUnit} from "@/lib/actions";
 
 type Unit = {
     id: number;
-}
+    equipmentId: number;
+    status: string;
+    createdAt: Date;
+    notes: string[];
+    errors: string[];
+};
 
 interface ItemProps {
     name: string;
@@ -30,19 +35,27 @@ export default function Item({ name, category, units, selectedUnit, setSelectedU
         await deleteUnit(id);
     }
 
+    async function handleAddUnit(name: string) {
+       const newUnit  = await addUnit(name);
+       if (!newUnit) return;
+       setUnitsList(prev => [...prev, newUnit]);
+
+    }
+
     return(
         <>
             <div className="bg-brand-950 pt-2 pb-2 pl-5 mt-5 border-white border-[1px] rounded-md">
-                <div className="grid grid-cols-5">
+                <div className="grid grid-cols-4">
                     <h1 className="font-bold text-2xl mt-2">{name}</h1>
                     <h1 className="text-2xl mt-2">{category}</h1>
-                    <button onClick={() => deleteEquipment(name)} className="bg-red-600 flex justify-center w-11 h-11 rounded-full col-end-7 mr-5 mb-1 text-black text-5xl">-</button>
+                    <button onClick={() => deleteEquipment(name)} className="bg-red-600 flex justify-center w-11 h-11 rounded-full col-end-6 mb-1 mr-3 text-black text-5xl">-</button>
+                    <button onClick={() => handleAddUnit(name)} className="bg-green-600 flex justify-center w-11 h-11 rounded-full col-end-7 mr-5 mb-1 text-black text-5xl">+</button>
                 </div>
             </div>
 
             { unitsList.length > 0 && unitsList.map((unit, index) => (
 
-                <div key={unit.id} className={`bg-brand-950 pt-2 pb-2 pl-3 ${index == 0 ? "mt-10" : "mt-5"} ${index + 1 == unitsList.length ? "mb-10" : "" } border-white border-[1px] rounded-md`}>
+                <div key={unit.id} className={`bg-brand-950 pt-2 pb-2 pl-3 ${index == 0 ? "mt-8" : "mt-5"} ${index + 1 == unitsList.length ? "mb-10" : "" } border-white border-[1px] rounded-md`}>
                     <div className="grid grid-cols-30">
                         <button onClick={() => setSelectedUnit(selectedUnit === unit.id ? null : unit.id)} className="bg-white w-6 h-6 rounded-sm flex items-center justify-center mt-1">
                             <div className={`${selectedUnit === unit.id ? "bg-blue-600 w-5 h-5 rounded-sm" : ""}`}></div>

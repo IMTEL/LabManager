@@ -20,7 +20,6 @@ export default async function Inventory() {
             items: true,
         }
     });
-    console.log(equipmentList);
 
     return (
         <div className="ml-5 mr-5 mt-5">
