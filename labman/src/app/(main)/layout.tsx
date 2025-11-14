@@ -46,7 +46,7 @@ export default async function RootLayout({
 
         <div className="flex h-screen">
 
-            <aside className="w-78 h-screen">
+            <aside className="w-73 h-screen">
                 < SideBar />
             </aside>
 

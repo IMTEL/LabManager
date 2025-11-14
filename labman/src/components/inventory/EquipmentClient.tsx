@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Item from "@/components/inventory/Item";
 import CategoryButton from "@/components/inventory/CategoryButton";
 import {deleteEquipment} from "@/lib/actions";
+import AddLoan from "@/components/inventory/AddLoan";
 
 type Equipment = {
     id: number;
@@ -73,23 +74,31 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
     }
 
     return(
-        <div>
-            <form onSubmit={handleSubmit}>
-                <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                <button type="submit">Add Equipment</button>
-            </form>
+        <>
+            <div className="flex">
+                <main className={`flex-1 mr-5 mt-5`}>
+                    <form onSubmit={handleSubmit}>
+                        <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                        <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                        <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                        <button type="submit">Add Equipment</button>
+                    </form>
 
-            <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
+                    <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
 
-            {filteredEquipment.map((equipment) => (
-                <Item key={equipment.id} name={equipment.name} category={equipment.category.name} units={equipment.items} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} deleteEquipment={handleDeleteEquipment} />
-            ))}
+                    {filteredEquipment.map((equipment) => (
+                        <Item key={equipment.id} name={equipment.name} category={equipment.category.name} units={equipment.items} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} deleteEquipment={handleDeleteEquipment} />
+                    ))}
 
-            <h1>Selected Unit: {selectedUnit}</h1>
-            <button onClick={() => setLoanView(!loanView)} >New loan</button>
-            {loanView && <h1>Loan view</h1>}
-        </div>
+                    <h1>Selected Unit: {selectedUnit}</h1>
+                    <button disabled={!selectedUnit} onClick={() => setLoanView(true)} >New loan</button>
+                </main>
+
+                <aside>
+                    {selectedUnit && loanView && <AddLoan unitId={selectedUnit} />}
+                </aside>
+
+            </div>
+        </>
     )
 }
