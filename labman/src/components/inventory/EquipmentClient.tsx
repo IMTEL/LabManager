@@ -32,7 +32,8 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
     const [image, setImage] = useState("");
 
     // Unit selection
-    const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
+    // The first index is the db id, the second is the index in the actual UI. This is used to identify the correct equipment while also having an index that is sensible to the user.
+    const [selectedUnit, setSelectedUnit] = useState<number[] | null>([0, 0]);
     const [loanView, setLoanView] = useState<boolean>(false);
 
     // Filtering equipment based on selected category
@@ -73,6 +74,11 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
 
     }
 
+    // Find the equipment in the state instead of using a slower database lookup
+    function findEquipment(unitId: number) {
+        return equipmentList.equipmentList.find(equipment => equipment.items.some(item => item.id === unitId));
+    }
+
     return(
         <>
             <div className="flex">
@@ -86,16 +92,28 @@ export default function EquipmentClient(equipmentList: EquipmentClientProps) {
 
                     <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
 
-                    {filteredEquipment.map((equipment) => (
-                        <Item key={equipment.id} name={equipment.name} category={equipment.category.name} units={equipment.items} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} deleteEquipment={handleDeleteEquipment} />
-                    ))}
+                    {filteredEquipment.map((equipment, index) => {
+                        console.log("Rendering equipment:", equipment);
 
-                    <h1>Selected Unit: {selectedUnit}</h1>
+                        return (
+                            <Item
+                                key={equipment.id}
+                                name={equipment.name}
+                                category={equipment.category.name}
+                                units={equipment.items}
+                                selectedUnit={selectedUnit}
+                                setSelectedUnit={setSelectedUnit}
+                                deleteEquipment={handleDeleteEquipment}
+                            />
+                        );
+                    })}
+
+                    <h1>Selected Unit: {selectedUnit?.[0]}</h1>
                     <button disabled={!selectedUnit} onClick={() => setLoanView(true)} >New loan</button>
                 </main>
 
                 <aside>
-                    {selectedUnit && loanView && <AddLoan unitId={selectedUnit} />}
+                    {selectedUnit && loanView && <AddLoan equipmentData={findEquipment(selectedUnit?.[0])} unitId={selectedUnit?.[1]} />}
                 </aside>
 
             </div>

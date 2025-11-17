@@ -17,8 +17,8 @@ interface ItemProps {
     name: string;
     category: string;
     units?: Unit[];
-    selectedUnit: number | null;
-    setSelectedUnit: (unit: number | null) => void;
+    selectedUnit: number[] | null;
+    setSelectedUnit: (unit: number[] | null) => void;
     deleteEquipment: (name: string) => void;
 }
 
@@ -57,8 +57,8 @@ export default function Item({ name, category, units, selectedUnit, setSelectedU
 
                 <div key={unit.id} className={`bg-brand-950 pt-2 pb-2 pl-3 ${index == 0 ? "mt-8" : "mt-5"} ${index + 1 == unitsList.length ? "mb-10" : "" } border-white border-[1px] rounded-md`}>
                     <div className="grid grid-cols-3">
-                        <button onClick={() => setSelectedUnit(selectedUnit === unit.id ? null : unit.id)} className="bg-white w-6 h-6 rounded-sm flex items-center justify-center mt-1 col-span-1">
-                            <div className={`${selectedUnit === unit.id ? "bg-blue-600 w-5 h-5 rounded-sm" : ""}`}></div>
+                        <button onClick={() => setSelectedUnit(selectedUnit?.[0] === unit.id ? null : [unit.id, index + 1])} className="bg-white w-6 h-6 rounded-sm flex items-center justify-center mt-1 col-span-1">
+                            <div className={`${selectedUnit?.[0] === unit.id ? "bg-blue-600 w-5 h-5 rounded-sm" : ""}`}></div>
                         </button>
                         <h1 className="mt-1">Unit {index + 1}</h1>
                         <button

@@ -26,5 +26,4 @@ export default function Card({ type, name, start, latestActivity}: CardProps) {
 
         </div>
     )
-
 }
