@@ -1,7 +1,6 @@
-﻿type Category = {
-    id: number;
-    name: string;
-}
+﻿"use client"
+
+import {useState} from "react";
 
 interface CategoryButtonProps {
     filters: string[];
@@ -10,12 +9,30 @@ interface CategoryButtonProps {
 }
 
 export default function CategoryButton({ filters, selected, onSelect }: CategoryButtonProps) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggle = () => setIsOpen(!isOpen);
+
     return(
-        <div className={`bg-brand-200 rounded-md flex gap-1`}>
-            { filters.map((filter, index) => (
-                <button key={filter} onClick={() => onSelect(selected === filter ? null : filter)} className={`bg-brand-950 flex-1 pt-2 pb-2 ${selected === filter ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800 hover:bg-gray-200" }`}>{filter}</button>
-            ))}
+
+        <div>
+            <button className="filter-button" onClick={toggle}>
+                {selected ? selected : "Category"}
+                <svg width="35" height="25" viewBox="2 6 20 20" className="">
+                    <path d="M12 19L16 15H8L12 19Z" fill="currentColor" />
+                </svg>
+            </button>
+
+            {isOpen && (
+                <ul className="filter-dropdown">
+                    {filters.map((filter) => (
+                        <li key={filter} onClick={() => { onSelect(filter); toggle(); }} className={`filter-dropdown-item ${filter === selected ? "filter-dropdown-item-selected" : ""}`}>{filter}</li>
+                    ))}
+                </ul>
+            )}
 
         </div>
+
+
     )
 }
