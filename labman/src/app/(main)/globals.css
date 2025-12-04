@@ -19,7 +19,12 @@
     --color-brand-200: #D9CDFF;
     --color-brand-500: #843AFF;
 
-    --color-red-600: #ED2015
+    --color-red-600: #ED2015;
+
+    --color-blue-600: #068EFF;
+
+    --color-yellow-500: #FFCC00;
+
 }
 
 
@@ -59,4 +64,16 @@ html {
 
 .filter-clear-button:hover {
     @apply bg-red-500 text-white cursor-pointer
+}
+
+.button {
+    @apply font-bold text-black rounded-md p-1
+}
+
+.button:hover {
+    @apply cursor-pointer brightness-90 transition-all duration-500 scale-105 ease-in-out
+}
+
+.item-view {
+    @apply bg-brand-950 rounded-md p-3 h-180 overflow-y-auto
 }

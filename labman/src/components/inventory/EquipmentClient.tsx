@@ -1,14 +1,16 @@
 ﻿"use client"
-import { useState, useEffect } from "react";
+import {useState, useEffect, useRef} from "react";
 import Item from "@/components/inventory/Item";
 import CategoryButton from "@/components/inventory/CategoryButton";
 import {deleteEquipment} from "@/lib/actions";
 import AddLoan from "@/components/inventory/AddLoan";
 import SortIcon from "@/components/inventory/sortIcon";
+import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 
 type Equipment = {
     id: number;
     name: string;
+    image: string;
     category: {
         id: number;
         name: string;
@@ -27,14 +29,14 @@ interface EquipmentClientProps {
 }
 
 export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
-    // Correct date format for equipment, to convert it to an actual date object.
+    // Correct date format for equipment to convert it to an actual date object.
     const datedEquipmentList = equipmentList.map(e => ({
         ...e,
         createdAt: new Date(e.createdAt)
     }));
 
     const [allEquipment, setAllEquipment] = useState(datedEquipmentList);
-    //const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>(equipmentList.equipmentList);
+    // const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>(equipmentList.equipmentList);
     const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
     // Equipment form
     const [name, setName] = useState("");
@@ -44,6 +46,8 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     // Unit selection
     // The first index is the db id, the second is the index in the actual UI. This is used to identify the correct equipment while also having an index that is sensible to the user.
     const [selectedUnit, setSelectedUnit] = useState<number[] | null>([0, 0]);
+    const [selectedEquipment, setSelectedEquipment ] = useState<Equipment | null>(null);
+    const [equipmentView, setEquipmentView] = useState<boolean>(false);
     const [loanView, setLoanView] = useState<boolean>(false);
 
     const [sort, setSort] = useState<{ column: SortColumn, direction: SortDirection}>({
@@ -111,7 +115,6 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     }
 
     function toggleSort(column: SortColumn) {
-        console.log(sort.column, sort.direction)
         setSort((prev) => {
             if (prev.column !== column) {
                 return {column, direction: "asc"}
@@ -125,8 +128,12 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
     return(
         <>
+
             <div className="flex">
+
                 <main className={`flex-1 mr-5`}>
+
+                    { equipmentView && <EquipmentInfo equipmentData={selectedEquipment} setEquipmentView={setEquipmentView} allEquipment={allEquipment} setAllEquipment={setAllEquipment} setSelectedEquipment={setSelectedEquipment} />}
 
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
@@ -153,12 +160,15 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                         return (
                             <Item
                                 key={equipment.id}
+                                equipment={equipment}
                                 name={equipment.name}
                                 category={equipment.category.name}
                                 creationDate={equipment.createdAt}
                                 units={equipment.items}
                                 selectedUnit={selectedUnit}
                                 setSelectedUnit={setSelectedUnit}
+                                setSelectedEquipment={setSelectedEquipment}
+                                setEquipmentView={setEquipmentView}
                                 deleteEquipment={handleDeleteEquipment}
                             />
                         );

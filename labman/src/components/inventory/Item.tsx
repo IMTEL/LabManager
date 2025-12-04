@@ -4,6 +4,20 @@ import Button from "@/components/core/Button";
 import {useEffect, useState} from "react";
 import {addUnit, deleteUnit} from "@/lib/actions";
 
+type Equipment = {
+    id: number;
+    name: string;
+    image: string;
+    category: {
+        id: number;
+        name: string;
+    }
+    createdAt: Date;
+    items: {
+        id: number;
+    }[]
+}
+
 type Unit = {
     id: number;
     equipmentId: number;
@@ -14,16 +28,19 @@ type Unit = {
 };
 
 interface ItemProps {
+    equipment: Equipment;
     name: string;
     category: string;
     creationDate: Date;
     units?: Unit[];
     selectedUnit: number[] | null;
     setSelectedUnit: (unit: number[] | null) => void;
+    setSelectedEquipment: (equipment: Equipment | null) => void;
+    setEquipmentView: (view: boolean) => void;
     deleteEquipment: (name: string) => void;
 }
 
-export default function Item({ name, category, creationDate, units, selectedUnit, setSelectedUnit, deleteEquipment }: ItemProps) {
+export default function Item({ equipment, name, category, creationDate, units, selectedUnit, setSelectedUnit, setSelectedEquipment, setEquipmentView, deleteEquipment }: ItemProps) {
     const [unitsList, setUnitsList] = useState<Unit[]>(units || []);
 
     // CreationDate is not an actual type of Date, so it needs to be converted to a Date object.
@@ -39,7 +56,8 @@ export default function Item({ name, category, creationDate, units, selectedUnit
         await deleteUnit(id);
     }
 
-    async function handleAddUnit(name: string) {
+    async function handleAddUnit(name?: string) {
+        if (!name) return;
        const newUnit  = await addUnit(name);
        if (!newUnit) return;
        setUnitsList(prev => [...prev, newUnit]);
@@ -48,7 +66,7 @@ export default function Item({ name, category, creationDate, units, selectedUnit
 
     return(
         <>
-            <div className="pt-2 pb-2 pl-3 border-white border-b-[1px]">
+            <div className="pt-2 pb-2 pl-3 border-white border-b-[1px]" onClick={() => {setSelectedEquipment(equipment); setEquipmentView(true)}}>
                 <div className="grid grid-cols-4">
                     <h1 className="font-bold text-2xl mt-2">{name}</h1>
                     <h1 className="text-2xl mt-2">{category}</h1>
