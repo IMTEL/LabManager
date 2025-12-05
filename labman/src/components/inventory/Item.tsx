@@ -3,6 +3,8 @@
 import Button from "@/components/core/Button";
 import {useEffect, useState} from "react";
 import {addUnit, deleteUnit} from "@/lib/actions";
+import {EllipsisVerticalIcon} from "@heroicons/react/24/solid";
+import Ellipsis from "@/components/core/Ellipsis";
 
 type Equipment = {
     id: number;
@@ -66,12 +68,20 @@ export default function Item({ equipment, name, category, creationDate, units, s
 
     return(
         <>
-            <div className="pt-2 pb-2 pl-3 border-white border-b-[1px]" onClick={() => {setSelectedEquipment(equipment); setEquipmentView(true)}}>
-                <div className="grid grid-cols-4">
-                    <h1 className="font-bold text-2xl mt-2">{name}</h1>
+            <div className="pt-2 pb-2 pl-3 border-white border-b-[1px]" >
+                <div className="grid grid-cols-4 grid-flow-col auto-cols-max ">
+                    <h1 className="font-bold text-2xl mt-2" onClick={() => {setSelectedEquipment(equipment); setEquipmentView(true)}}>{name}</h1>
                     <h1 className="text-2xl mt-2">{category}</h1>
                     <h1 className="text-2xl mt-2">{unitsList.length}/0</h1>
                     <h1 className="text-2xl mt-2">{date.toLocaleDateString("no")}</h1>
+                    <Ellipsis
+                        equipment={equipment}
+                        setSelectedEquipment={setSelectedEquipment}
+                        setEquipmentView={setEquipmentView}
+                        deleteEquipment={deleteEquipment}
+
+                    />
+
 
                     {/*
                     <button onClick={() => deleteEquipment(name)} className="bg-red-600 flex justify-center w-11 h-11 rounded-full col-span-1 justify-self-end mb-1 mr-3 text-black text-5xl">-</button>

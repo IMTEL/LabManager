@@ -1,5 +1,5 @@
 ﻿"use client"
-import {useState, useEffect, useRef} from "react";
+import {useState} from "react";
 import Item from "@/components/inventory/Item";
 import CategoryButton from "@/components/inventory/CategoryButton";
 import {deleteEquipment} from "@/lib/actions";
@@ -104,6 +104,9 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     }
 
     async function handleDeleteEquipment(name: string) {
+        const userConfirmation = confirm("Are you sure you want to delete " + name + "?");
+        if (!userConfirmation) return
+
         setAllEquipment(prev => prev.filter(e => e.name !== name));
         await deleteEquipment(name);
 
