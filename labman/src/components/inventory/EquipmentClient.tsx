@@ -66,7 +66,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                 case "category":
                     return sort.direction === "asc" ? a.category.name.localeCompare(b.category.name) : b.category.name.localeCompare(a.category.name);
-
+                // TODO: b.items.length is undefined. There are also multiple other places in the code where there is a similar issue. This should be fixed.
                 case "stock":
                     return sort.direction === "asc" ? a.items.length - b.items.length : b.items.length - a.items.length;
 
@@ -146,7 +146,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                     </form>
 
                     <div className="grid grid-cols-2 mt-10 mb-5">
-                        <CategoryButton filters={[...new Set(datedEquipmentList.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
+                        <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
                         <button className="filter-clear-button" onClick={() => setSelectedFilter(null)}>Clear filter</button>
                     </div>
 
