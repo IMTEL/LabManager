@@ -136,7 +136,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                 <main className={`flex-1 mr-5`}>
 
-                    { equipmentView && <EquipmentInfo equipmentData={selectedEquipment} setEquipmentView={setEquipmentView} allEquipment={allEquipment} setAllEquipment={setAllEquipment} setSelectedEquipment={setSelectedEquipment} />}
+                    { equipmentView && <EquipmentInfo equipmentData={selectedEquipment} setEquipmentView={setEquipmentView} allEquipment={allEquipment} setAllEquipment={setAllEquipment} setSelectedEquipment={setSelectedEquipment} deleteEquipment={handleDeleteEquipment} />}
 
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />

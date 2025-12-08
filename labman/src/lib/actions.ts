@@ -92,3 +92,33 @@ export async function addUnit(equipmentName: string) {
     console.log("Added unit");
     return newUnit;
 }
+
+export async function updateEquipment (equipmentId: number, name: string, category: string, image: string) {
+
+    let categoryId = 0;
+
+    let equipmentCategory = await prisma.equipmentCategory.findUnique({where: {name: category}})
+
+    if (equipmentCategory) {
+        console.log("Category exists");
+        categoryId = equipmentCategory.id
+    } else {
+        console.log("Category exists")
+        equipmentCategory = await prisma.equipmentCategory.create({data: {name: category}})
+        categoryId = equipmentCategory.id
+    }
+
+    const equipment = await prisma.equipment.update({
+        where: {
+            id: equipmentId,
+        },
+        data : {
+            name: name,
+            categoryId: categoryId,
+            image: image
+        },
+        include: {category: true}
+    })
+    revalidatePath("/");
+    return equipment;
+}

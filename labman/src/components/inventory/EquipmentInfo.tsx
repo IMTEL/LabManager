@@ -1,7 +1,7 @@
 ﻿"use client";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import EditField from "@/components/core/EditField";
-import {addUnit, deleteUnit} from "@/lib/actions";
+import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions";
 
 type Equipment = {
     id: number;
@@ -32,11 +32,22 @@ interface EquipmentInfoProps {
     allEquipment: Equipment[];
     setAllEquipment: React.Dispatch<React.SetStateAction<Equipment[]>>;
     setSelectedEquipment: (equipment: Equipment | null) => void;
+    deleteEquipment: (name: string) => void;
 }
 
-export default function EquipmentInfo({equipmentData, setEquipmentView, allEquipment, setAllEquipment, setSelectedEquipment}: EquipmentInfoProps) {
+export default function EquipmentInfo({equipmentData, setEquipmentView, allEquipment, setAllEquipment, setSelectedEquipment, deleteEquipment}: EquipmentInfoProps) {
 
     const [units, setUnits] = useState<Unit[]>(equipmentData?.items || []);
+
+    const [initialFormData, setInitialFormData] = useState({name: equipmentData?.name, category: equipmentData?.category.name, image: equipmentData?.image})
+    const [formData, setFormData] = useState(initialFormData);
+
+    // The initial data has to be updated when the equipmentData changes
+    useEffect(() => {
+        if (!equipmentData) return;
+
+        setInitialFormData({name: equipmentData.name, category: equipmentData.category.name, image: equipmentData.image})
+    }, [equipmentData]);
 
     async function handleAddUnit(name?: string) {
         if (!name) return;
@@ -78,6 +89,38 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
         await deleteUnit(id);
     }
 
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        // Check so no fields are empty
+        if (!formData.name?.trim() || !formData.category?.trim() || !formData.image?.trim()) {
+            alert("Please fill in all fields");
+            setFormData(initialFormData);
+            return;
+        }
+
+        if (JSON.stringify(formData) === JSON.stringify(initialFormData)) return;
+
+
+      const updatedEq = await updateEquipment(equipmentData!.id, formData.name!, formData.category!, formData.image!)
+
+      const updatedEquipment = {
+          ...equipmentData!,
+          name: updatedEq.name,
+          category: {
+              id: updatedEq.category.id,
+              name: updatedEq.category.name
+          },
+          image: updatedEq.image,
+          categoryId: updatedEq.categoryId
+
+      }
+
+      setAllEquipment(prev =>
+        prev.map(eq => eq.id === updatedEquipment.id ? updatedEquipment : eq))
+
+      setSelectedEquipment(updatedEquipment);
+    }
+
 
 
 
@@ -98,24 +141,20 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
                     <div className="flex-1 rounded-l-lg p-2">
                         <h1 className="text-5xl font-bold">Equipment information</h1>
                         <div className="mt-7 mb-10">
-                            <button className="bg-blue-600 button mr-2">Save changes</button>
-                            <button className="bg-yellow-500 button mr-10">Undo</button>
-                            <button className="bg-red-600 button">Delete equipment</button>
+                            <button form="equipmentDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? " bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
+                            <button onClick={() => {setFormData(initialFormData)}} className="bg-yellow-500 button mr-10">Undo</button>
+                            <button onClick={() => {deleteEquipment(equipmentData?.name); setEquipmentView(false)}} className="bg-red-600 button">Delete equipment</button>
                         </div>
 
                         <div className="mb-25">
-                            <div>
-                                <h1 className="font-bold text-3xl mb-2">Name:</h1>
-                                <EditField value={equipmentData?.name || "Unknown"} />
-                            </div>
-                            <div>
-                                <h1 className="font-bold text-3xl mb-2 mt-6">Category:</h1>
-                                <EditField value={equipmentData?.category?.name || "Unknown"} />
-                            </div>
-                            <div>
-                                <h1 className="font-bold text-3xl mb-2 mt-6">Image:</h1>
-                                <EditField value={equipmentData?.image || "Unknown"} />
-                            </div>
+                           <form id="equipmentDataForm" onSubmit={handleSubmit}>
+                               <label className="font-bold text-3xl mb-3">Name:</label>
+                               <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="border-2 border-gray-300 rounded-md p-2 w-full mb-3" />
+                               <label className="font-bold text-3xl mb-3">Category:</label>
+                               <input type="text" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="border-2 border-gray-300 rounded-md p-2 w-full mb-3" />
+                               <label className="font-bold text-3xl mb-3">Image:</label>
+                               <input type="text" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})} className="border-2 border-gray-300 rounded-md p-2 w-full mb-3" />
+                           </form>
                         </div>
                         <span>---------------------------------------------------------------------------------------</span>
                         <h1 className="font-bold text-4xl mt-5 mb-3">Items</h1>
