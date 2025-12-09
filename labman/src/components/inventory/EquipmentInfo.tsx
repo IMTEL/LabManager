@@ -1,6 +1,5 @@
 ﻿"use client";
 import {useEffect, useState} from "react";
-import EditField from "@/components/core/EditField";
 import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions";
 
 type Equipment = {
@@ -28,14 +27,14 @@ type Unit = {
 
 interface EquipmentInfoProps {
     equipmentData: Equipment | null;
-    setEquipmentView: (view: boolean) => void;
+    setSideView: (view: string) => void;
     allEquipment: Equipment[];
     setAllEquipment: React.Dispatch<React.SetStateAction<Equipment[]>>;
     setSelectedEquipment: (equipment: Equipment | null) => void;
     deleteEquipment: (name: string) => void;
 }
 
-export default function EquipmentInfo({equipmentData, setEquipmentView, allEquipment, setAllEquipment, setSelectedEquipment, deleteEquipment}: EquipmentInfoProps) {
+export default function EquipmentInfo({equipmentData, setSideView, setAllEquipment, setSelectedEquipment, deleteEquipment}: EquipmentInfoProps) {
 
     const [units, setUnits] = useState<Unit[]>(equipmentData?.items || []);
 
@@ -43,6 +42,7 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
     const [formData, setFormData] = useState(initialFormData);
 
     // The initial data has to be updated when the equipmentData changes
+    // TODO: Possible optimization? Unnecessary use of useEffect
     useEffect(() => {
         if (!equipmentData) return;
 
@@ -129,7 +129,7 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
             {/* Dark backdrop */}
             <div
                 className="fixed inset-0 bg-black/70 z-40"
-                onClick={() => setEquipmentView(false)}
+                onClick={() => setSideView("")}
             />
 
             {/* Right-side panel */}
@@ -143,17 +143,29 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
                         <div className="mt-7 mb-10">
                             <button form="equipmentDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? " bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
                             <button onClick={() => {setFormData(initialFormData)}} className="bg-yellow-500 button mr-10">Undo</button>
-                            <button onClick={() => {deleteEquipment(equipmentData?.name); setEquipmentView(false)}} className="bg-red-600 button">Delete equipment</button>
+                            <button onClick={() => {deleteEquipment(equipmentData?.name); setSideView("")}} className="bg-red-600 button">Delete equipment</button>
                         </div>
 
                         <div className="mb-25">
                            <form id="equipmentDataForm" onSubmit={handleSubmit}>
-                               <label className="font-bold text-3xl mb-3">Name:</label>
-                               <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="border-2 border-gray-300 rounded-md p-2 w-full mb-3" />
-                               <label className="font-bold text-3xl mb-3">Category:</label>
-                               <input type="text" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="border-2 border-gray-300 rounded-md p-2 w-full mb-3" />
-                               <label className="font-bold text-3xl mb-3">Image:</label>
-                               <input type="text" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})} className="border-2 border-gray-300 rounded-md p-2 w-full mb-3" />
+                               <label className="side-form-label">Name:</label>
+                               <input
+                                   type="text"
+                                   value={formData.name}
+                                   onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                   className="side-form-input" />
+                               <label className="side-form-label">Category:</label>
+                               <input
+                                   type="text"
+                                   value={formData.category}
+                                   onChange={(e) => setFormData({...formData, category: e.target.value})}
+                                   className="side-form-input" />
+                               <label className="side-form-label">Image:</label>
+                               <input
+                                   type="text"
+                                   value={formData.image}
+                                   onChange={(e) => setFormData({...formData, image: e.target.value})}
+                                   className="side-form-input" />
                            </form>
                         </div>
                         <span>---------------------------------------------------------------------------------------</span>
@@ -174,7 +186,7 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
                     {/* Right side of panel */}
                     <div className="flex-1 bg-brand-950 rounded-r-lg p-2">
                         <div className="flex justify-end">
-                            <button onClick={() => setEquipmentView(false)} className="bg-red-600 w-11 h-11 rounded-full font-bold">X</button>
+                            <button onClick={() => setSideView("")} className="bg-red-600 w-11 h-11 rounded-full font-bold">X</button>
                         </div>
                         <div className="ml-7 mt-10">
                             <div className="font-bold text-2xl mb-5">
@@ -185,9 +197,6 @@ export default function EquipmentInfo({equipmentData, setEquipmentView, allEquip
                             <span>----------------------------------------------------------------------------------</span>
                             <h1 className="font-bold text-4xl mt-5">History</h1>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>

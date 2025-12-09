@@ -17,11 +17,11 @@ type Equipment = {
 interface EllipsisProps {
     equipment: Equipment;
     setSelectedEquipment: (equipment: Equipment | null) => void;
-    setEquipmentView: (view: boolean) => void;
+    setSideView: (view: string) => void;
     deleteEquipment: (name: string) => void;
 }
 
-export default function Ellipsis({equipment, setSelectedEquipment, setEquipmentView, deleteEquipment}: EllipsisProps) {
+export default function Ellipsis({equipment, setSelectedEquipment, setSideView, deleteEquipment}: EllipsisProps) {
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
 // TODO: Find a way to ensure that only one dropdown is open at a time
@@ -38,8 +38,8 @@ export default function Ellipsis({equipment, setSelectedEquipment, setEquipmentV
             </button>
             {isOpen && (
                 <div className="bg-white rounded-md absolute right-5 text-black">
-                    <p className="filter-dropdown-item">New Loan</p>
-                    <p onClick={() => {setSelectedEquipment(equipment); setEquipmentView(true); toggle()}} className="filter-dropdown-item">Edit</p>
+                    <p onClick={() => {setSideView("loanView"); setSelectedEquipment(equipment)}} className="filter-dropdown-item">New Loan</p>
+                    <p onClick={() => {setSelectedEquipment(equipment); setSideView("eqInfo"); toggle()}} className="filter-dropdown-item">Edit</p>
                     <p onClick={() => {deleteEquipment(equipment.name); toggle()}} className="filter-dropdown-item">Delete</p>
                 </div>
             )}

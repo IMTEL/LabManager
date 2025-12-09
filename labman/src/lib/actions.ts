@@ -122,3 +122,54 @@ export async function updateEquipment (equipmentId: number, name: string, catego
     revalidatePath("/");
     return equipment;
 }
+
+export async function addLoan (borrower : string, start : string, end : string, unitId : number, phone? : string, email? : string) {
+    const dateStart = new Date(start);
+    const dateEnd = new Date(end);
+    const user = await getUser();
+
+    let borrowerUser = await prisma.borrower.findUnique({
+        where: {
+            phone: phone
+        }
+    })
+    if (!borrowerUser) {
+        borrowerUser = await prisma.borrower.create({
+            data: {
+                name: borrower,
+                phone: phone,
+                email: email,
+                note: "",
+                creationDate: new Date(),
+            }
+        })
+    }
+
+    const loan = await prisma.loan.create({
+        data: {
+            startDate: dateStart,
+            endDate: dateEnd,
+            status: "Active",
+            borrowerId: borrowerUser.id,
+            userId: user?.id ?? 0,
+            item: {connect: {id: unitId}}
+        }
+    })
+    revalidatePath("/");
+    return loan;
+}
+
+export async function getUser() {
+    const session = await getSession();
+
+    if (session) {
+            const tSession = await prisma.session.findUnique({
+                where: { id: session.id },
+                include: {
+                    user: true
+                }
+            })
+            return tSession?.user;
+        }
+
+}

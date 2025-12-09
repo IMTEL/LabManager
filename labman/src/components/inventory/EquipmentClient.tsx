@@ -6,6 +6,7 @@ import {deleteEquipment} from "@/lib/actions";
 import AddLoan from "@/components/inventory/AddLoan";
 import SortIcon from "@/components/inventory/sortIcon";
 import EquipmentInfo from "@/components/inventory/EquipmentInfo";
+import LoanView from "@/components/inventory/LoanView";
 
 type Equipment = {
     id: number;
@@ -47,7 +48,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     // The first index is the db id, the second is the index in the actual UI. This is used to identify the correct equipment while also having an index that is sensible to the user.
     const [selectedUnit, setSelectedUnit] = useState<number[] | null>([0, 0]);
     const [selectedEquipment, setSelectedEquipment ] = useState<Equipment | null>(null);
-    const [equipmentView, setEquipmentView] = useState<boolean>(false);
+    const [sideView, setSideView] = useState("");
     const [loanView, setLoanView] = useState<boolean>(false);
 
     const [sort, setSort] = useState<{ column: SortColumn, direction: SortDirection}>({
@@ -136,7 +137,15 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                 <main className={`flex-1 mr-5`}>
 
-                    { equipmentView && <EquipmentInfo equipmentData={selectedEquipment} setEquipmentView={setEquipmentView} allEquipment={allEquipment} setAllEquipment={setAllEquipment} setSelectedEquipment={setSelectedEquipment} deleteEquipment={handleDeleteEquipment} />}
+                    { sideView == "eqInfo" && <EquipmentInfo
+                        equipmentData={selectedEquipment}
+                        setSideView={setSideView}
+                        allEquipment={allEquipment}
+                        setAllEquipment={setAllEquipment}
+                        setSelectedEquipment={setSelectedEquipment}
+                        deleteEquipment={handleDeleteEquipment} />}
+
+                    { sideView == "loanView" && <LoanView setSideView={setSideView} equipmentData={selectedEquipment} />}
 
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
@@ -171,7 +180,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                                 selectedUnit={selectedUnit}
                                 setSelectedUnit={setSelectedUnit}
                                 setSelectedEquipment={setSelectedEquipment}
-                                setEquipmentView={setEquipmentView}
+                                setSideView={setSideView}
                                 deleteEquipment={handleDeleteEquipment}
                             />
                         );

@@ -38,11 +38,11 @@ interface ItemProps {
     selectedUnit: number[] | null;
     setSelectedUnit: (unit: number[] | null) => void;
     setSelectedEquipment: (equipment: Equipment | null) => void;
-    setEquipmentView: (view: boolean) => void;
+    setSideView: (view: string) => void;
     deleteEquipment: (name: string) => void;
 }
 
-export default function Item({ equipment, name, category, creationDate, units, selectedUnit, setSelectedUnit, setSelectedEquipment, setEquipmentView, deleteEquipment }: ItemProps) {
+export default function Item({ equipment, name, category, creationDate, units, selectedUnit, setSelectedUnit, setSelectedEquipment, setSideView, deleteEquipment }: ItemProps) {
     const [unitsList, setUnitsList] = useState<Unit[]>(units || []);
 
     // CreationDate is not an actual type of Date, so it needs to be converted to a Date object.
@@ -70,14 +70,14 @@ export default function Item({ equipment, name, category, creationDate, units, s
         <>
             <div className="pt-2 pb-2 pl-3 border-white border-b-[1px]" >
                 <div className="grid grid-cols-4 grid-flow-col auto-cols-max ">
-                    <h1 className="font-bold text-2xl mt-2" onClick={() => {setSelectedEquipment(equipment); setEquipmentView(true)}}>{name}</h1>
+                    <h1 className="font-bold text-2xl mt-2" onClick={() => {setSelectedEquipment(equipment); setSideView("eqInfo")}}>{name}</h1>
                     <h1 className="text-2xl mt-2">{category}</h1>
                     <h1 className="text-2xl mt-2">{unitsList.length}/0</h1>
                     <h1 className="text-2xl mt-2">{date.toLocaleDateString("no")}</h1>
                     <Ellipsis
                         equipment={equipment}
                         setSelectedEquipment={setSelectedEquipment}
-                        setEquipmentView={setEquipmentView}
+                        setSideView={setSideView}
                         deleteEquipment={deleteEquipment}
 
                     />
@@ -93,7 +93,9 @@ export default function Item({ equipment, name, category, creationDate, units, s
 
                 <div key={unit.id} className={`bg-brand-950 pt-2 pb-2 pl-3 ${index == 0 ? "mt-8" : "mt-5"} ${index + 1 == unitsList.length ? "mb-10" : "" } border-white border-[1px] rounded-md`}>
                     <div className="grid grid-cols-3">
-                        <button onClick={() => setSelectedUnit(selectedUnit?.[0] === unit.id ? null : [unit.id, index + 1])} className="bg-white w-6 h-6 rounded-sm flex items-center justify-center mt-1 col-span-1">
+                        <button
+                            onClick={() => setSelectedUnit(selectedUnit?.[0] === unit.id ? null : [unit.id, index + 1])}
+                            className="bg-white w-6 h-6 rounded-sm flex items-center justify-center mt-1 col-span-1">
                             <div className={`${selectedUnit?.[0] === unit.id ? "bg-blue-600 w-5 h-5 rounded-sm" : ""}`}></div>
                         </button>
                         <h1 className="mt-1">Unit {index + 1}</h1>

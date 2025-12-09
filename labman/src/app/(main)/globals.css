@@ -81,3 +81,11 @@ html {
 .item-view {
     @apply bg-brand-950 rounded-md p-3 h-180 overflow-y-auto
 }
+
+.side-form-label {
+    @apply font-bold text-3xl mb-3
+}
+
+.side-form-input {
+    @apply border-2 border-gray-300 rounded-md p-2 w-full mb-3
+}
