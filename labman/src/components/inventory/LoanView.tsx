@@ -23,6 +23,13 @@ type Unit = {
     errors: string[];
 };
 
+type Borrower = {
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+}
+
 interface LoanViewProps {
     equipmentData: Equipment;
     setSideView: (view: string) => void;
@@ -33,13 +40,25 @@ interface LoanViewProps {
 }
 
 export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
+    const [borrowers, setBorrowers] = useState<Borrower[]>([]);
+
+    useEffect(() => {
+        fetch("/api/borrower")
+        .then(res => res.json())
+        .then(data => setBorrowers(data))
+    }, []);
+
     const [selectedUnit, setSelectedUnit] = useState<Unit>();
 
-    const [formData, setFormData] = useState({borrower: "", startDate: "", endDate: "", borrowerPhone: "", borrowerEmail: ""})
+    const today = new Date().toISOString().split("T")[0];
+    const [formData, setFormData] = useState({borrower: "", startDate: today, endDate: "", borrowerPhone: "", borrowerEmail: ""})
 
+    const phoneRequired = formData.borrowerEmail.trim() === "";
+    const emailRequired = formData.borrowerPhone.trim() === "";
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        console.log(formData);
         if ( !selectedUnit || !formData.borrower?.trim() || !formData.startDate?.trim() || !formData.endDate?.trim() || (!formData.borrowerPhone?.trim() && !formData.borrowerEmail?.trim())) {
             alert("Please fill in all required fields");
             return;
@@ -48,6 +67,9 @@ export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
         const newLoan = await addLoan(formData.borrower, formData.startDate, formData.endDate, selectedUnit.id, formData.borrowerPhone, formData.borrowerEmail);
         console.log(newLoan);
     }
+
+
+    //TODO: More imrpovements to do on this form and the other forms plus valditation of the form data. Delaying this until the core functionality is done.
 
     return (
         <>
@@ -75,29 +97,74 @@ export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
                             <form id="loanDataForm" onSubmit={handleSubmit}>
                                 <label className="side-form-label">Borrower:</label>
                                 <input
+                                    id="borrower"
+                                    list="borrowers"
+                                    required
                                     type="text"
                                     className="side-form-input"
-                                    onChange={(e) => setFormData({...formData, borrower: e.target.value})} />
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                        setFormData({...formData, borrower: e.target.value})
+                                        console.log(formData);
+                                        const borrower = borrowers.find(borrower => borrower.name === e.target.value);
+                                        if (borrower) setFormData({...formData, borrowerPhone: borrower.phone, borrowerEmail: borrower.email});
+
+                                    }}
+                                />
+                                 <datalist id="borrowers">
+                                     {borrowers.map(borrower => <option key={borrower.id} value={borrower.name}>{borrower.name}</option>)}
+                                 </datalist>
                                 <label className="side-form-label">Start date:</label>
                                 <input
-                                    type="text"
+                                    id="startDate"
+                                    type="date"
+                                    required
+                                    value={formData.startDate}
+                                    min={today}
                                     className="side-form-input"
-                                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}/>
+                                    onChange={(e) => {
+                                        const selected = e.target.value;
+                                        if (selected < today) return;
+                                        setFormData({...formData, startDate: selected})
+                                    }}
+                                />
                                 <label className="side-form-label">End date:</label>
                                 <input
-                                    type="text"
+                                    type="date"
+                                    required
+                                    value={formData.endDate || ""}
+                                    min={formData.startDate}
                                     className="side-form-input"
-                                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}/>
+                                    onChange={(e) => {
+                                        const selected = e.target.value;
+                                        if (selected < formData.startDate) return;
+                                        setFormData({...formData, endDate: e.target.value});
+
+                                    }}
+                                />
                                 <label className="side-form-label">Borrower phone number:</label>
                                 <input
-                                    type="text"
+                                    required={phoneRequired}
+                                    value={formData.borrowerPhone}
+                                    type="tel"
+                                    pattern="[0-9]{8}"
                                     className="side-form-input"
-                                    onChange={(e) => setFormData({...formData, borrowerPhone: e.target.value})}/>
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                        setFormData({...formData, borrowerPhone: e.target.value})
+                                        console.log(formData);
+                                    }}
+                                />
                                 <label className="side-form-label">Borrower email:</label>
                                 <input
-                                    type="text"
+                                    required={emailRequired}
+                                    value={formData.borrowerEmail}
+                                    type="email"
                                     className="side-form-input"
-                                    onChange={(e) => setFormData({...formData, borrowerEmail: e.target.value})}/>
+                                    onChange={(e) => {
+                                        setFormData({...formData, borrowerEmail: e.target.value})
+                                    }}
+                                />
                             </form>
                         </div>
                         <span>---------------------------------------------------------------------------------------</span>
