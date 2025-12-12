@@ -173,3 +173,12 @@ export async function getUser() {
         }
 
 }
+
+export async function deleteLoan(id: number) {
+    await prisma.loan.delete({
+        where: {
+            id: id
+        }
+    })
+    revalidatePath("/loans");
+}

@@ -13,13 +13,17 @@
 }
 
 @theme {
+    --color-green-400: #57D175;
     --color-green-500: #34C759;
+    --color-green-900: #1D5E2E;
 
     --color-brand-950: #2C0078;
     --color-brand-200: #D9CDFF;
     --color-brand-500: #843AFF;
 
+    --color-red-400: #FF6C64;
     --color-red-600: #ED2015;
+    --color-red-950: #4B0804;
 
     --color-blue-600: #068EFF;
 

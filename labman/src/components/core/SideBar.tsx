@@ -7,6 +7,7 @@ export default function SideBar() {
     const pages = [
         { name: "Inventory", path: "/" },
         { name: "Users", path: "/users" },
+        { name: "Loans", path: "/loans" }
     ];
 
     const currentPath = usePathname();
