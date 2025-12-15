@@ -1,18 +1,5 @@
 ﻿import {useState} from "react";
-
-type Equipment = {
-    id: number;
-    name: string;
-    image: string;
-    category: {
-        id: number;
-        name: string;
-    }
-    createdAt: Date;
-    items: {
-        id: number;
-    }[]
-}
+import {Equipment} from "@/types/inventory";
 
 interface EllipsisProps {
     equipment: Equipment;

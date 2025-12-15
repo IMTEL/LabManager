@@ -1,20 +1,7 @@
 ﻿"use client";
 import {useEffect, useState} from "react";
 import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions";
-
-type Equipment = {
-    id: number;
-    name: string;
-    image: string;
-    category: {
-        id: number;
-        name: string;
-    }
-    createdAt: Date;
-    items: {
-        id: number;
-    }[]
-}
+import {Equipment} from "@/types/inventory";
 
 type Unit = {
     id: number;
@@ -26,7 +13,7 @@ type Unit = {
 };
 
 interface EquipmentInfoProps {
-    equipmentData: Equipment | null;
+    equipmentData: Equipment;
     setSideView: (view: string) => void;
     allEquipment: Equipment[];
     setAllEquipment: React.Dispatch<React.SetStateAction<Equipment[]>>;
@@ -36,7 +23,7 @@ interface EquipmentInfoProps {
 
 export default function EquipmentInfo({equipmentData, setSideView, setAllEquipment, setSelectedEquipment, deleteEquipment}: EquipmentInfoProps) {
 
-    const [units, setUnits] = useState<Unit[]>(equipmentData?.items || []);
+    const [units, setUnits] = useState<Unit[]>(equipmentData.items || []);
 
     const [initialFormData, setInitialFormData] = useState({name: equipmentData?.name, category: equipmentData?.category.name, image: equipmentData?.image})
     const [formData, setFormData] = useState(initialFormData);
@@ -57,7 +44,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
 
         const updatedEquipment = {
             ...equipmentData,
-            items: [...(equipmentData?.items ?? []), newUnit]
+            items: [...(equipmentData!.items ?? []), newUnit]
         };
 
 
@@ -143,7 +130,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                         <div className="mt-7 mb-10">
                             <button form="equipmentDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? " bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
                             <button onClick={() => {setFormData(initialFormData)}} className="bg-yellow-500 button mr-10">Undo</button>
-                            <button onClick={() => {deleteEquipment(equipmentData?.name); setSideView("")}} className="bg-red-600 button">Delete equipment</button>
+                            <button onClick={() => {deleteEquipment(equipmentData!.name); setSideView("")}} className="bg-red-600 button">Delete equipment</button>
                         </div>
 
                         <div className="mb-25">

@@ -1,18 +1,7 @@
 ﻿"use client"
 import {useEffect, useState} from "react";
 import {addLoan} from "@/lib/actions";
-
-type Equipment = {
-    id: number;
-    name: string;
-    image: string;
-    category: {
-        id: number;
-        name: string;
-    }
-    createdAt: Date;
-    items: Unit[]
-}
+import {Equipment} from "@/types/inventory";
 
 type Unit = {
     id: number;
@@ -33,10 +22,6 @@ type Borrower = {
 interface LoanViewProps {
     equipmentData: Equipment;
     setSideView: (view: string) => void;
-  /*  allEquipment: Equipment[];
-    setAllEquipment: React.Dispatch<React.SetStateAction<Equipment[]>>;
-    setSelectedEquipment: (equipment: Equipment | null) => void;
-    deleteEquipment: (name: string) => void; */
 }
 
 export default function LoanView({setSideView, equipmentData} : LoanViewProps) {

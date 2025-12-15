@@ -3,24 +3,12 @@ import {useState} from "react";
 import Item from "@/components/inventory/Item";
 import CategoryButton from "@/components/inventory/CategoryButton";
 import {deleteEquipment} from "@/lib/actions";
-import AddLoan from "@/components/inventory/AddLoan";
 import SortIcon from "@/components/inventory/sortIcon";
 import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 import LoanView from "@/components/inventory/LoanView";
+import {Equipment} from "@/types/inventory";
 
-type Equipment = {
-    id: number;
-    name: string;
-    image: string;
-    category: {
-        id: number;
-        name: string;
-    }
-    createdAt: Date;
-    items: {
-        id: number;
-    }[]
-}
+
 
 type SortDirection = "asc" | "desc" | null;
 type SortColumn = "name" | "category" | "stock" | "date" | null;
@@ -44,12 +32,8 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     const [category, setCategory] = useState("");
     const [image, setImage] = useState("");
 
-    // Unit selection
-    // The first index is the db id, the second is the index in the actual UI. This is used to identify the correct equipment while also having an index that is sensible to the user.
-    const [selectedUnit, setSelectedUnit] = useState<number[] | null>([0, 0]);
     const [selectedEquipment, setSelectedEquipment ] = useState<Equipment | null>(null);
     const [sideView, setSideView] = useState("");
-    const [loanView, setLoanView] = useState<boolean>(false);
 
     const [sort, setSort] = useState<{ column: SortColumn, direction: SortDirection}>({
         column: null,
@@ -113,11 +97,6 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
     }
 
-    // Find the equipment in the state instead of using a slower database lookup
-    function findEquipment(unitId: number) {
-        return datedEquipmentList.find(equipment => equipment.items.some(item => item.id === unitId));
-    }
-
     function toggleSort(column: SortColumn) {
         setSort((prev) => {
             if (prev.column !== column) {
@@ -137,7 +116,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                 <main className={`flex-1 mr-5`}>
 
-                    { sideView == "eqInfo" && <EquipmentInfo
+                    { sideView == "eqInfo" && selectedEquipment && <EquipmentInfo
                         equipmentData={selectedEquipment}
                         setSideView={setSideView}
                         allEquipment={allEquipment}
@@ -145,7 +124,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                         setSelectedEquipment={setSelectedEquipment}
                         deleteEquipment={handleDeleteEquipment} />}
 
-                    { sideView == "loanView" && <LoanView setSideView={setSideView} equipmentData={selectedEquipment} />}
+                    { sideView == "loanView" && selectedEquipment && <LoanView setSideView={setSideView} equipmentData={selectedEquipment} />}
 
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
@@ -177,21 +156,16 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                                 category={equipment.category.name}
                                 creationDate={equipment.createdAt}
                                 units={equipment.items}
-                                selectedUnit={selectedUnit}
-                                setSelectedUnit={setSelectedUnit}
                                 setSelectedEquipment={setSelectedEquipment}
                                 setSideView={setSideView}
                                 deleteEquipment={handleDeleteEquipment}
                             />
                         );
                     })}
-
-                    <h1>Selected Unit: {selectedUnit?.[0]}</h1>
-                    <button disabled={!selectedUnit} onClick={() => setLoanView(true)} >New loan</button>
                 </main>
 
                 <aside>
-                    {selectedUnit && loanView && <AddLoan equipmentData={findEquipment(selectedUnit?.[0])} unitId={selectedUnit?.[1]} />}
+
                 </aside>
             </div>
         </>

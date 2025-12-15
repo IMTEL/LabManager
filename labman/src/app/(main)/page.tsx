@@ -4,7 +4,6 @@ import { validateSessionToken} from "@/auth/session";
 import { cookies } from "next/headers";
 import {redirect} from "next/navigation";
 import EquipmentClient from "@/components/inventory/EquipmentClient";
-import AddLoan from "@/components/inventory/AddLoan";
 
 export default async function Inventory() {
 
@@ -24,7 +23,7 @@ export default async function Inventory() {
 
     return (
         <div className="">
-            <div className="ml-5">
+            <div className="ml-20 mr-20">
                 <EquipmentClient equipmentList={equipmentList} />
             </div>
 

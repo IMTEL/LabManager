@@ -89,7 +89,7 @@ export default function Card({ loan, name, start, last}: CardProps) {
 
             <div className="mb-3 ml-4 mt-5 flex gap-2">
                 <button className="button bg-blue-600">Edit</button>
-                <button onClick={() => deleteSelectedLoan(loan.id)} className="button bg-red-600">Delete</button>
+                <button onClick={() => deleteSelectedLoan(loan!.id)} className="button bg-red-600">Delete</button>
                 <button className="button bg-green-500 ml-auto mr-3">Return</button>
             </div>
 
