@@ -32,9 +32,17 @@ export async function POST(req: Request) {
         data: {
             name,
             image,
-            categoryId
+            categoryId,
+            items: {
+                create: {
+                    status: "Available"
+                }
+            }
         },
-        include: {category: true}
+        include: {
+            category: true,
+            items: true
+        }
     });
 
 

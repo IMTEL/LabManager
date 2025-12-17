@@ -14,5 +14,7 @@
         createdAt: Date;
         notes: string[];
         errors: string[];
+        loanId: number | null;
+
     }[]
 }

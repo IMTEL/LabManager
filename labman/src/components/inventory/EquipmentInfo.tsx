@@ -2,6 +2,7 @@
 import {useEffect, useState} from "react";
 import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions";
 import {Equipment} from "@/types/inventory";
+import {loanCount} from "@/utils/inventoryUtils";
 
 type Unit = {
     id: number;
@@ -10,6 +11,7 @@ type Unit = {
     createdAt: Date;
     notes: string[];
     errors: string[];
+    loanId: number | null;
 };
 
 interface EquipmentInfoProps {
@@ -23,7 +25,6 @@ interface EquipmentInfoProps {
 
 export default function EquipmentInfo({equipmentData, setSideView, setAllEquipment, setSelectedEquipment, deleteEquipment}: EquipmentInfoProps) {
 
-    const [units, setUnits] = useState<Unit[]>(equipmentData.items || []);
 
     const [initialFormData, setInitialFormData] = useState({name: equipmentData?.name, category: equipmentData?.category.name, image: equipmentData?.image})
     const [formData, setFormData] = useState(initialFormData);
@@ -40,7 +41,6 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
         if (!name) return;
         const newUnit = await addUnit(name);
         if (!newUnit) return;
-        setUnits(prev => [...prev, newUnit]);
 
         const updatedEquipment = {
             ...equipmentData,
@@ -58,7 +58,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
     }
 
     async function handleDeleteUnit(id: number) {
-        setUnits(units.filter((unit) => unit.id !== id));
+       // setUnits(units.filter((unit) => unit.id !== id));
 
         const updatedEquipment = {
             ...equipmentData,
@@ -107,9 +107,6 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
 
       setSelectedEquipment(updatedEquipment);
     }
-
-
-
 
     return (
         <>
@@ -160,10 +157,11 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                         <div className="item-view">
                             <button className="button bg-green-500 mb-10" onClick={() => handleAddUnit(equipmentData?.name)}>Add unit</button>
                             <div className="mb-10">
-                                { units.map((unit, index) => (
+                                { equipmentData.items.map((unit, index) => (
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
-                                        <button className="text-black font-bold rounded-full h-7 w-7 bg-red-600" onClick={() => handleDeleteUnit(unit.id)}>-</button>
+                                        { unit.loanId && <h1 className="text-black font-bold">Borrowed</h1>}
+                                        { !unit.loanId && <button className="text-black font-bold rounded-full h-7 w-7 bg-red-600 border border-black" onClick={() => handleDeleteUnit(unit.id)}>-</button>}
                                     </div>
                                 )) }
                             </div>
@@ -179,7 +177,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                             <div className="font-bold text-2xl mb-5">
                                 <h1>{equipmentData?.name}</h1>
                                 <h1>{equipmentData?.category.name}</h1>
-                                <h1>{units.length} in stock</h1>
+                                <h1>{equipmentData.items.length - loanCount(equipmentData)}/{equipmentData.items.length} Available</h1>
                             </div>
                             <span>----------------------------------------------------------------------------------</span>
                             <h1 className="font-bold text-4xl mt-5">History</h1>

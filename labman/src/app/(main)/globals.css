@@ -98,3 +98,7 @@ input:invalid {
     border-color: red;
 
 }
+
+.delete-button {
+    @apply text-black font-bold rounded-full h-7 w-7 bg-red-600
+}

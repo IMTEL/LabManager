@@ -2,6 +2,7 @@
 import {useEffect, useState} from "react";
 import {addLoan} from "@/lib/actions";
 import {Equipment} from "@/types/inventory";
+import {loanCount} from "@/utils/inventoryUtils";
 
 type Unit = {
     id: number;
@@ -22,9 +23,11 @@ type Borrower = {
 interface LoanViewProps {
     equipmentData: Equipment;
     setSideView: (view: string) => void;
+    setAllEquipment: React.Dispatch<React.SetStateAction<Equipment[]>>;
+    setSelectedEquipment: (equipment: Equipment | null) => void;
 }
 
-export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
+export default function LoanView({setSideView, equipmentData, setAllEquipment, setSelectedEquipment} : LoanViewProps) {
     const [borrowers, setBorrowers] = useState<Borrower[]>([]);
 
     useEffect(() => {
@@ -48,9 +51,25 @@ export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
             alert("Please fill in all required fields");
             return;
         }
-        console.log(formData, selectedUnit);
         const newLoan = await addLoan(formData.borrower, formData.startDate, formData.endDate, selectedUnit.id, formData.borrowerPhone, formData.borrowerEmail);
-        console.log(newLoan);
+
+        const updatedEquipment = {
+            ...equipmentData,
+            items: equipmentData.items.map(item => {
+                if (item.id === selectedUnit.id) {
+                    return {...item, loanId: newLoan.id}
+                } else {
+                    return item;
+                }
+            })
+        }
+
+        setAllEquipment(prev =>
+            prev.map(eq => eq.id === updatedEquipment.id ? updatedEquipment : eq))
+
+        setSelectedEquipment(updatedEquipment);
+
+
     }
 
 
@@ -159,11 +178,12 @@ export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
                                 {equipmentData.items.map((unit, index) => (
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
-                                        <button
+                                        { unit.loanId && <h1 className="text-black font-bold">Borrowed</h1>}
+                                        { !unit.loanId && <button
                                             className="bg-white h-8 w-8 border-black border-1 rounded-full flex items-center justify-center"
                                             onClick={() => setSelectedUnit(unit)}>
                                             <div className={selectedUnit == unit ? "bg-blue-600 h-4 w-4 rounded-full" : ""}></div>
-                                        </button>
+                                        </button>}
 
                                     </div>
                                 )) }
@@ -180,7 +200,7 @@ export default function LoanView({setSideView, equipmentData} : LoanViewProps) {
                             <div className="font-bold text-2xl mb-5">
                                 <h1>{equipmentData.name}</h1>
                                 <h1>{equipmentData.category.name}</h1>
-                                <h1>{equipmentData.items.length} in stock</h1>
+                                <h1>{equipmentData.items.length - loanCount(equipmentData)}/{equipmentData.items.length} Available</h1>
                             </div>
                             <span>----------------------------------------------------------------------------------</span>
                             <h1 className="font-bold text-4xl mt-5">History</h1>

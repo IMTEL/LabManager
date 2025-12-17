@@ -30,7 +30,7 @@ type Loan = {
             createdAt: Date;
 
         }
-    } | null;
+    }
 }
 
 interface CardProps {
@@ -58,7 +58,7 @@ export default function Card({ loan, name, start, last}: CardProps) {
                 {loan && <span className={"mt-3 text-3xl"}>|</span>}
                 {loan && <p title={loan.item?.equipment.name} className="mt-4 text-2xl w-40 whitespace-nowrap overflow-hidden text-ellipsis">{loan.item?.equipment.name}</p>}
                 {loan && <div className={"mt-4 mr-3 ml-auto rounded-md bg-green-400 flex justify-center px-1 w-fit h-5 left-3"}>
-                    <p className={"font-bold text text-black text-nowrap"}>Not active</p>
+                    <p className={"font-bold text text-black text-nowrap"}>Active</p>
                 </div>}
             </div>
 
@@ -70,7 +70,7 @@ export default function Card({ loan, name, start, last}: CardProps) {
             {loan && <div className="grid grid-cols-2 grid-rows-2 gap-4">
                 <div className="pl-3 pt-2.5 pb-2.5 w-fit">
                     <h1 className="text-2xl text-gray-300 font-bold">Equipment: </h1>
-                    <p className="text-2xl">{loan.item?.equipment.name}</p>
+                    <p className="text-2xl">{loan.item.equipment.name}</p>
                 </div>
 
                 <div></div>
@@ -78,7 +78,7 @@ export default function Card({ loan, name, start, last}: CardProps) {
                 <div className="pl-3 pt-2.5 pb-2.5 w-fit">
                     <div className="grid grid-cols-2 grid-rows-2 gap-2">
                         <h1 className="text-2xl text-gray-300 font-bold">Borrower: </h1>
-                        <h1 className="text-2xl font-bold">{loan.borrower.name}</h1>
+                        <h1 className="text-2xl">{loan.borrower.name}</h1>
                         <h1 className="text-2xl text-gray-300 font-bold">Start: </h1>
                         <h1 className="text-2xl">{start}</h1>
                         <h1 className="text-2xl text-gray-300 font-bold">End: </h1>
@@ -90,7 +90,7 @@ export default function Card({ loan, name, start, last}: CardProps) {
             <div className="mb-3 ml-4 mt-5 flex gap-2">
                 <button className="button bg-blue-600">Edit</button>
                 <button onClick={() => deleteSelectedLoan(loan!.id)} className="button bg-red-600">Delete</button>
-                <button className="button bg-green-500 ml-auto mr-3">Return</button>
+                { loan && <button className="button bg-green-500 ml-auto mr-3">Return</button>}
             </div>
 
         </div>

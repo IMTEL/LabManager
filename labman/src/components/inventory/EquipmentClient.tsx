@@ -80,6 +80,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
         })
         // Adding the new equipment to the state
         const newEquipment = await res.json();
+        console.log(newEquipment)
 
         setAllEquipment(prev => [...prev, newEquipment]);
         setName("")
@@ -124,7 +125,11 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                         setSelectedEquipment={setSelectedEquipment}
                         deleteEquipment={handleDeleteEquipment} />}
 
-                    { sideView == "loanView" && selectedEquipment && <LoanView setSideView={setSideView} equipmentData={selectedEquipment} />}
+                    { sideView == "loanView" && selectedEquipment && <LoanView
+                        setSideView={setSideView}
+                        equipmentData={selectedEquipment}
+                        setAllEquipment={setAllEquipment}
+                        setSelectedEquipment={setSelectedEquipment} />}
 
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
@@ -155,7 +160,6 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                                 name={equipment.name}
                                 category={equipment.category.name}
                                 creationDate={equipment.createdAt}
-                                units={equipment.items}
                                 setSelectedEquipment={setSelectedEquipment}
                                 setSideView={setSideView}
                                 deleteEquipment={handleDeleteEquipment}
