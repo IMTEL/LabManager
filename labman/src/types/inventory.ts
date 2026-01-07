@@ -1,4 +1,6 @@
-﻿export type Equipment = {
+﻿import {Loan} from "@/generated/prisma";
+
+export type Equipment = {
     id: number;
     name: string;
     image: string;
@@ -14,7 +16,11 @@
         createdAt: Date;
         notes: string[];
         errors: string[];
-        loanId: number | null;
+        loans: Loan[];
+        activeLoanId: number | null;
+        activeLoan: Loan | null;
 
     }[]
 }
+
+// TODO: Difference between null and undefined and ? means optional

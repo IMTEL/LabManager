@@ -1,9 +1,9 @@
 ﻿import AddUser from "@/components/users/AddUser";
-import Card from "@/components/core/Card";
 import prisma from "@/lib/prisma";
 import {cookies} from "next/headers";
 import {validateSessionToken} from "@/auth/session";
 import {redirect} from "next/navigation";
+import CardList from "@/components/core/CardList";
 
 
 
@@ -18,11 +18,7 @@ export default async function Users() {
     return(
         <div>
             <AddUser />
-            <div className=" ml-5 mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {users.map((user) => (
-                    <Card key={user.id} name={user.username} start={user.createdAt.toLocaleDateString()} last={user.latestActivity.toLocaleDateString()} />
-                ))}
-            </div>
+            <CardList usersProp={users} />
         </div>
     )
 }

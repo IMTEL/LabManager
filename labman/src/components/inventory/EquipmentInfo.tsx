@@ -44,7 +44,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
 
         const updatedEquipment = {
             ...equipmentData,
-            items: [...(equipmentData!.items ?? []), newUnit]
+            items: [...(equipmentData.items ?? []), newUnit]
         };
 
 
@@ -62,7 +62,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
 
         const updatedEquipment = {
             ...equipmentData,
-            items: [...(equipmentData?.items ?? [])].filter(unit => unit.id !== id)
+            items: [...(equipmentData.items ?? [])].filter(unit => unit.id !== id)
         }
 
         setAllEquipment(prev =>
@@ -107,6 +107,8 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
 
       setSelectedEquipment(updatedEquipment);
     }
+
+    let hasActiveLoan = false;
 
     return (
         <>
@@ -158,10 +160,12 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                             <button className="button bg-green-500 mb-10" onClick={() => handleAddUnit(equipmentData?.name)}>Add unit</button>
                             <div className="mb-10">
                                 { equipmentData.items.map((unit, index) => (
+                                    // TODO: Figure out why it requires the code to be so explicit here.
+                                    hasActiveLoan = unit.activeLoan !== null,
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
-                                        { unit.loanId && <h1 className="text-black font-bold">Borrowed</h1>}
-                                        { !unit.loanId && <button className="text-black font-bold rounded-full h-7 w-7 bg-red-600 border border-black" onClick={() => handleDeleteUnit(unit.id)}>-</button>}
+                                        { hasActiveLoan && (unit.activeLoan.status !== "Returned") && <h1 className="text-black font-bold">Borrowed</h1>}
+                                        { (!hasActiveLoan || (hasActiveLoan && unit.activeLoan.status === "Returned")) && <button className="text-black font-bold rounded-full h-7 w-7 bg-red-600 border border-black" onClick={() => handleDeleteUnit(unit.id)}>-</button>}
                                     </div>
                                 )) }
                             </div>

@@ -84,7 +84,11 @@ export async function addUnit(equipmentName: string) {
         data: {
             equipmentId: equipment.id,
             status: "Available",
-
+        },
+        // TODO: Relational properties always have to be specified or else they will not be included in the response
+        include: {
+            loans: true,
+            activeLoan: true
         }
 
     })
@@ -128,6 +132,8 @@ export async function addLoan (borrower : string, start : string, end : string, 
     const dateEnd = new Date(end);
     const user = await getUser();
 
+    if (!user) {alert("Could not find a valid user"); return}
+
     let borrowerUser = await prisma.borrower.findUnique({
         where: {
             phone: phone
@@ -151,10 +157,21 @@ export async function addLoan (borrower : string, start : string, end : string, 
             endDate: dateEnd,
             status: "Active",
             borrowerId: borrowerUser.id,
-            userId: user?.id ?? 0,
-            item: {connect: {id: unitId}}
+            userId: user.id,
+            itemId: unitId
         }
     })
+
+    const item = await prisma.item.update({
+        where: {
+            id: unitId
+        },
+        data: {
+            status: "Unavailable",
+            activeLoanId: loan.id
+        }
+    })
+    console.log(item.activeLoan);
     revalidatePath("/");
     return loan;
 }
@@ -178,6 +195,18 @@ export async function deleteLoan(id: number) {
     await prisma.loan.delete({
         where: {
             id: id
+        }
+    })
+    revalidatePath("/loans");
+}
+
+export async function returnLoan(id: number) {
+    await prisma.loan.update({
+        where: {
+            id: id
+        },
+        data: {
+            status: "Returned"
         }
     })
     revalidatePath("/loans");

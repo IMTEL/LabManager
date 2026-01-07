@@ -51,7 +51,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                 case "category":
                     return sort.direction === "asc" ? a.category.name.localeCompare(b.category.name) : b.category.name.localeCompare(a.category.name);
-                // TODO: b.items.length is undefined. There are also multiple other places in the code where there is a similar issue. This should be fixed.
+
                 case "stock":
                     return sort.direction === "asc" ? a.items.length - b.items.length : b.items.length - a.items.length;
 

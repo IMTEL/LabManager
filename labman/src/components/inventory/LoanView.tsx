@@ -53,11 +53,13 @@ export default function LoanView({setSideView, equipmentData, setAllEquipment, s
         }
         const newLoan = await addLoan(formData.borrower, formData.startDate, formData.endDate, selectedUnit.id, formData.borrowerPhone, formData.borrowerEmail);
 
+        if (!newLoan) return;
+
         const updatedEquipment = {
             ...equipmentData,
             items: equipmentData.items.map(item => {
                 if (item.id === selectedUnit.id) {
-                    return {...item, loanId: newLoan.id}
+                    return {...item, activeLoan: newLoan, activeLoanId: newLoan.id}
                 } else {
                     return item;
                 }
@@ -71,6 +73,8 @@ export default function LoanView({setSideView, equipmentData, setAllEquipment, s
 
 
     }
+
+    let hasActiveLoan = false;
 
 
     //TODO: More imrpovements to do on this form and the other forms plus valditation of the form data. Delaying this until the core functionality is done.
@@ -176,10 +180,11 @@ export default function LoanView({setSideView, equipmentData, setAllEquipment, s
                         <div className="item-view">
                             <div className="mb-10">
                                 {equipmentData.items.map((unit, index) => (
+                                   hasActiveLoan = unit.activeLoan !== null,
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
-                                        { unit.loanId && <h1 className="text-black font-bold">Borrowed</h1>}
-                                        { !unit.loanId && <button
+                                        { hasActiveLoan && (unit.activeLoan.status !== "Returned") && <h1 className="text-black font-bold">Borrowed</h1>}
+                                        { (!hasActiveLoan || (hasActiveLoan && unit.activeLoan.status === "Returned")) && <button
                                             className="bg-white h-8 w-8 border-black border-1 rounded-full flex items-center justify-center"
                                             onClick={() => setSelectedUnit(unit)}>
                                             <div className={selectedUnit == unit ? "bg-blue-600 h-4 w-4 rounded-full" : ""}></div>

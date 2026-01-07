@@ -17,7 +17,12 @@ export default async function Inventory() {
     const equipmentList = await prisma.equipment.findMany({
         include: {
             category: true,
-            items: true,
+            items: {
+                include: {
+                    loans: true,
+                    activeLoan: true
+                }
+            }
         }
     });
 
