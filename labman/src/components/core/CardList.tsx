@@ -2,7 +2,8 @@
 import Card from "@/components/core/Card";
 import {useState} from "react";
 import {User} from "@/generated/prisma";
-import {returnLoan, deleteLoan} from "@/lib/actions";
+import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
+
 
 type Loans = {
     id: number;
@@ -34,28 +35,54 @@ type Loans = {
 
 type Loan = Loans[0];
 
-type Users = User[];
-
-type Props = Loans | Users;
-
 interface CardListProps {
     loansProp?: Loan[];
     usersProp?: User[];
 }
-
-const isLoan = (item: unknown): item is Loan => {
-    return typeof item === "object" && item !== null && "borrower" in item;
-};
-
-const isUser = (item: unknown): item is User => {
-    return typeof item === "object" && item !== null && "username" in item;
-};
 
 
 export default function CardList({ loansProp = [], usersProp = []}: CardListProps) {
 
     const [loans, setLoans] = useState<Loan[]>(loansProp);
     const [users, setUsers] = useState<User[]>(usersProp);
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        const res = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
+
+        const newUser : User = await res.json();
+
+        if (newUser) {
+            console.log(newUser)
+            setUsername("");
+            setPassword("");
+            setUsers(prev => [...prev, newUser]);
+
+
+        } else {
+            alert("Failed to create user");
+        }
+    }
+
+   async function handleDeleteUser(userId: number) {
+        if (window.confirm("Are you sure you want to delete this user?")) {
+            setUsers(prev => prev.filter(user => user.id !== userId));
+            await deleteUser(userId);
+        }
+   }
+
 
     const hasReturnedLoans = loans.some(
         (loan) => loan.status === "Returned"
@@ -86,16 +113,25 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
         setLoans(prev => prev.filter(loan => loan.id !== loanId));
         await deleteLoan(loanId)
     }
+    console.log(users)
 
     return (
         <div className={"ml-5 mt-5"}>
+            { users.length !== 0 && <div className={"mb-15"}>
+                <form onSubmit={handleSubmit}>
+                    <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name="username" placeholder="Username" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                    <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password" placeholder="Password" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                    <button type="submit">Add User</button>
+
+                </form>
+            </div>}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {loans.map(loan => {
                     if (loan.status === "Returned") return;
                     return <Card loan={loan} returnLoan={handleReturnLoan} deleteLoan={handleDeleteLoan} key={loan.id} />;
                 })}
                 {users.map(user => {
-                   return <Card user={user} key={user.id} />;
+                   return <Card user={user} key={user.id} deleteUser={handleDeleteUser} />;
                 })}
             </div>
             {hasReturnedLoans && (

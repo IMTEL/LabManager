@@ -4,12 +4,11 @@ import {revalidatePath} from "next/cache";
 import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
 
-export async function deleteUser(username : string) {
-    console.log("Delete user", username);
+export async function deleteUser(userId : number) {
 
     const user = await prisma.user.findUnique({
         where: {
-            username: username
+            id: userId
         },
         include: {
             sessions: true
@@ -26,7 +25,7 @@ export async function deleteUser(username : string) {
 
     await prisma.user.delete({
         where: {
-            username: username
+            id: userId
         }
     });
 

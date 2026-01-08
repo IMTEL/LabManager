@@ -3,7 +3,7 @@
 import prisma from '@/lib/prisma';
 import "../../(main)/globals.css";
 import { useState } from "react";
-
+// TODO: A potential problem is that the website requires a user account to interact with it but it also requires an user to create an user in the first place
 export default function Home() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

@@ -161,7 +161,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                             <div className="mb-10">
                                 { equipmentData.items.map((unit, index) => (
                                     // TODO: Figure out why it requires the code to be so explicit here.
-                                    hasActiveLoan = unit.activeLoan !== null,
+                                    hasActiveLoan = unit.activeLoan != null,
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
                                         { hasActiveLoan && (unit.activeLoan.status !== "Returned") && <h1 className="text-black font-bold">Borrowed</h1>}
@@ -175,6 +175,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                     {/* Right side of panel */}
                     <div className="flex-1 bg-brand-950 rounded-r-lg p-2">
                         <div className="flex justify-end">
+                            <button onClick={() => {setSideView("loanView")}} className="bg-blue-600 mr-3 button">Lend equipment</button>
                             <button onClick={() => setSideView("")} className="bg-red-600 w-11 h-11 rounded-full font-bold">X</button>
                         </div>
                         <div className="ml-7 mt-10">

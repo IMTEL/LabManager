@@ -16,12 +16,12 @@ export async function POST(req: Request) {
         console.log("User does not exist");
     }
     // Create the user
-    await prisma.user.create({
+    const newUser = await prisma.user.create({
         data: {
             username,
             hashedPassword
         }
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(newUser);
 }

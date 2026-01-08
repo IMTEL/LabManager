@@ -1,7 +1,5 @@
 ﻿"use client"
 
-import {deleteLoan, deleteUser} from "@/lib/actions";
-import {useRouter} from "next/navigation";
 import {User} from "@/generated/prisma";
 
 
@@ -39,16 +37,16 @@ interface CardProps {
     loan?: Loan;
     returnLoan?: (id: number) => void
     deleteLoan?: (id: number) => void
+    deleteUser?: (id: number) => void
 }
 
+// TODO: Could have a button to reactivate a loan, not a priority right now
 
-
-export default function Card({ loan, user, returnLoan, deleteLoan}: CardProps) {
-    const router = useRouter();
+export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: CardProps) {
 
     const name = loan?.item.equipment.name || user?.username;
-    const start = loan?.startDate.toLocaleDateString("no") || user?.createdAt.toLocaleDateString("no");
-    const last = loan?.endDate.toLocaleDateString("no") || user?.latestActivity.toLocaleDateString("no");
+    const start = loan?.startDate.toLocaleDateString("no") || new Date(user.createdAt).toLocaleDateString("no");
+    const last = loan?.endDate.toLocaleDateString("no") || new  Date(user.latestActivity).toLocaleDateString("no");
 
     return(
         <div className="bg-brand-950 border-white border-[1px] rounded-[18px] w-fit">
@@ -56,8 +54,8 @@ export default function Card({ loan, user, returnLoan, deleteLoan}: CardProps) {
                 <h1 className="text-3xl font-bold pl-3 pt-2.5">{name}</h1>
                 {loan && <span className={"mt-3 text-3xl"}>|</span>}
                 {loan && <p title={loan.item.equipment.name} className="mt-4 text-2xl w-40 whitespace-nowrap overflow-hidden text-ellipsis">{loan.item?.equipment.name}</p>}
-                {loan && <div className={"mt-4 mr-3 ml-auto rounded-md bg-green-400 flex justify-center px-1 w-fit h-5 left-3"}>
-                    <p className={"font-bold text text-black text-nowrap"}>Active</p>
+                {loan && <div className={"mt-4 mr-3 ml-auto rounded-md flex justify-center px-1 w-fit h-5 left-3" + (loan.status === "Returned" ? " bg-green-400" : loan.status === "Active" ? " bg-yellow-400" : " bg-red-600" )}>
+                    <p className={"font-bold text text-black text-nowrap"}>{loan.status === "Returned" ? "Returned" : loan.status === "Active" ? "Active" : "Late" }</p>
                 </div>}
             </div>
 
@@ -88,7 +86,7 @@ export default function Card({ loan, user, returnLoan, deleteLoan}: CardProps) {
 
             <div className="mb-3 ml-4 mt-5 flex gap-2">
                 <button className="button bg-blue-600">Edit</button>
-                <button onClick={() => deleteLoan && loan ? deleteLoan(loan.id) : console.log("wait")} className="button bg-red-600">Delete</button>
+                <button onClick={() => deleteLoan && loan ? deleteLoan(loan.id) : deleteUser(user.id)} className="button bg-red-600">Delete</button>
                 { loan && loan.status != "Returned" && <button onClick={() => returnLoan ? returnLoan(loan.id) : alert("Error")} className="button bg-green-500 ml-auto mr-3">Return</button>}
             </div>
 
