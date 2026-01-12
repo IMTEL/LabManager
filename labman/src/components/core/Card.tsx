@@ -48,6 +48,12 @@ export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: 
     const start = loan?.startDate.toLocaleDateString("no") || new Date(user.createdAt).toLocaleDateString("no");
     const last = loan?.endDate.toLocaleDateString("no") || new  Date(user.latestActivity).toLocaleDateString("no");
 
+    if (loan) {
+        if (new Date(loan.endDate) < new Date() && loan.status === "Active") {
+            loan.status = "Due";
+        }
+    }
+
     return(
         <div className="bg-brand-950 border-white border-[1px] rounded-[18px] w-fit">
             <div className="border-b-white border-b-[1px] flex gap-2 ">
@@ -55,7 +61,7 @@ export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: 
                 {loan && <span className={"mt-3 text-3xl"}>|</span>}
                 {loan && <p title={loan.item.equipment.name} className="mt-4 text-2xl w-40 whitespace-nowrap overflow-hidden text-ellipsis">{loan.item?.equipment.name}</p>}
                 {loan && <div className={"mt-4 mr-3 ml-auto rounded-md flex justify-center px-1 w-fit h-5 left-3" + (loan.status === "Returned" ? " bg-green-400" : loan.status === "Active" ? " bg-yellow-400" : " bg-red-600" )}>
-                    <p className={"font-bold text text-black text-nowrap"}>{loan.status === "Returned" ? "Returned" : loan.status === "Active" ? "Active" : "Late" }</p>
+                    <p className={"font-bold text text-black text-nowrap"}>{loan.status === "Returned" ? "Returned" : loan.status === "Active" ? "Active" : "Due" }</p>
                 </div>}
             </div>
 
