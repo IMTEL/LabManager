@@ -4,12 +4,11 @@ import {revalidatePath} from "next/cache";
 import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
 
-export async function deleteUser(username : string) {
-    console.log("Delete user", username);
+export async function deleteUser(userId : number) {
 
     const user = await prisma.user.findUnique({
         where: {
-            username: username
+            id: userId
         },
         include: {
             sessions: true
@@ -26,7 +25,7 @@ export async function deleteUser(username : string) {
 
     await prisma.user.delete({
         where: {
-            username: username
+            id: userId
         }
     });
 
@@ -50,5 +49,164 @@ export async function logout() {
     if (session) {
         await deleteSession(session.id);
     }
+}
 
+export async function deleteEquipment(name: string) {
+    await prisma.equipment.delete({
+        where: {
+            name: name
+        }
+    })
+    revalidatePath("/");
+}
+
+export async function deleteUnit(id: number) {
+    await prisma.item.delete({
+        where: {
+            id: id
+        }
+    })
+    revalidatePath("/");
+}
+
+export async function addUnit(equipmentName: string) {
+
+    const equipment = await prisma.equipment.findUnique({
+        where: {
+            name: equipmentName
+        }
+    })
+
+    if (!equipment) {alert("Equipment not found"); return}
+
+    const newUnit = await prisma.item.create({
+        data: {
+            equipmentId: equipment.id,
+            status: "Available",
+        },
+        // TODO: Relational properties always have to be specified or else they will not be included in the response
+        include: {
+            loans: true,
+            activeLoan: true
+        }
+
+    })
+    revalidatePath("/");
+    console.log("Added unit");
+    return newUnit;
+}
+
+export async function updateEquipment (equipmentId: number, name: string, category: string, image: string) {
+
+    let categoryId = 0;
+
+    let equipmentCategory = await prisma.equipmentCategory.findUnique({where: {name: category}})
+
+    if (equipmentCategory) {
+        console.log("Category exists");
+        categoryId = equipmentCategory.id
+    } else {
+        console.log("Category exists")
+        equipmentCategory = await prisma.equipmentCategory.create({data: {name: category}})
+        categoryId = equipmentCategory.id
+    }
+
+    const equipment = await prisma.equipment.update({
+        where: {
+            id: equipmentId,
+        },
+        data : {
+            name: name,
+            categoryId: categoryId,
+            image: image
+        },
+        include: {category: true}
+    })
+    revalidatePath("/");
+    return equipment;
+}
+
+export async function addLoan (borrower : string, start : string, end : string, unitId : number, phone? : string, email? : string) {
+    const dateStart = new Date(start);
+    const dateEnd = new Date(end);
+    const user = await getUser();
+
+    if (!user) {alert("Could not find a valid user"); return}
+
+    let borrowerUser = await prisma.borrower.findUnique({
+        where: {
+            phone: phone
+        }
+    })
+    if (!borrowerUser) {
+        borrowerUser = await prisma.borrower.create({
+            data: {
+                name: borrower,
+                phone: phone,
+                email: email,
+                note: "",
+                creationDate: new Date(),
+            }
+        })
+    }
+
+    const loan = await prisma.loan.create({
+        data: {
+            startDate: dateStart,
+            endDate: dateEnd,
+            status: "Active",
+            borrowerId: borrowerUser.id,
+            userId: user.id,
+            itemId: unitId
+        }
+    })
+
+    const item = await prisma.item.update({
+        where: {
+            id: unitId
+        },
+        data: {
+            status: "Unavailable",
+            activeLoanId: loan.id
+        }
+    })
+    console.log(item.activeLoan);
+    revalidatePath("/");
+    return loan;
+}
+
+export async function getUser() {
+    const session = await getSession();
+
+    if (session) {
+            const tSession = await prisma.session.findUnique({
+                where: { id: session.id },
+                include: {
+                    user: true
+                }
+            })
+            return tSession?.user;
+        }
+
+}
+
+export async function deleteLoan(id: number) {
+    await prisma.loan.delete({
+        where: {
+            id: id
+        }
+    })
+    revalidatePath("/loans");
+}
+
+export async function returnLoan(id: number) {
+    await prisma.loan.update({
+        where: {
+            id: id
+        },
+        data: {
+            status: "Returned"
+        }
+    })
+    revalidatePath("/loans");
 }

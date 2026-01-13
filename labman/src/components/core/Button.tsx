@@ -10,14 +10,12 @@ interface ButtonProps {
 export default function Button({ username, type }: ButtonProps) {
 
     async function deletion(){
-        console.log("Button clicked");
         if (username) {
             if (type == "deleteUser") {
                 await deleteUser(username)
             }
 
         } else if (type == "logout") {
-            console.log("Logout clicked");
             await logout()
             redirect("/login");
         }

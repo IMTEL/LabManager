@@ -5,7 +5,7 @@ import NavBar from "@/components/core/NavBar";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import {validateSessionToken} from "@/auth/session";
-import {getSession} from "@/lib/actions";
+import {getSession, getUser} from "@/lib/actions";
 import SideBar from "@/components/core/SideBar";
 
 const spartan = League_Spartan({
@@ -25,19 +25,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-    let user;
-    const session = await getSession();
-
-        if (session) {
-            const tSession = await prisma.session.findUnique({
-                where: { id: session.id },
-                include: {
-                    user: true
-                }
-            })
-            user = tSession?.user;
-        }
-
+    const user = await getUser();
 
   return (
     <html lang="en" className={spartan.variable}>
@@ -46,12 +34,12 @@ export default async function RootLayout({
 
         <div className="flex h-screen">
 
-            <aside className="w-78 h-screen">
+            <aside className="w-73 h-screen">
                 < SideBar />
             </aside>
 
             <main className="flex-1 overflow-auto">
-                <NavBar username={user?.username ?? null} />
+                <NavBar username={user?.username ?? "Unknown"} />
                 {children}
             </main>
         </div>

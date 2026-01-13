@@ -7,11 +7,10 @@ export default function SideBar() {
     const pages = [
         { name: "Inventory", path: "/" },
         { name: "Users", path: "/users" },
+        { name: "Loans", path: "/loans" }
     ];
 
     const currentPath = usePathname();
-
-    console.log(currentPath);
 
     return(
         <div className="bg-brand-950 h-screen">

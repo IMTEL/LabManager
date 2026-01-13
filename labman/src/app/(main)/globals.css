@@ -13,11 +13,22 @@
 }
 
 @theme {
+    --color-green-400: #57D175;
     --color-green-500: #34C759;
+    --color-green-900: #1D5E2E;
 
     --color-brand-950: #2C0078;
+    --color-brand-200: #D9CDFF;
+    --color-brand-500: #843AFF;
 
-    --color-red-600: #ED2015
+    --color-red-400: #FF6C64;
+    --color-red-600: #ED2015;
+    --color-red-950: #4B0804;
+
+    --color-blue-600: #068EFF;
+
+    --color-yellow-500: #FFCC00;
+
 }
 
 
@@ -29,4 +40,65 @@ body {
 
 html {
     font-family: var(--font-spartan), sans-serif;
+}
+
+.sorting-button {
+    @apply w-auto font-bold text-2xl inline-flex
+}
+
+.filter-button {
+    @apply bg-white rounded-md text-black pl-2 pt-1 pb-1 inline-flex
+}
+
+.filter-button:hover {
+    @apply bg-gray-200 cursor-pointer
+}
+
+.filter-dropdown {
+    @apply bg-white rounded-md shadow-lg absolute z-10 mt-1 text-black
+}
+
+.filter-dropdown-item {
+    @apply px-1 py-1 hover:bg-gray-200 hover:rounded-md cursor-pointer
+}
+
+.filter-clear-button {
+    @apply bg-white rounded-md text-red-500 px-2 w-fit
+}
+
+.filter-clear-button:hover {
+    @apply bg-red-500 text-white cursor-pointer
+}
+
+.button {
+    @apply font-bold text-black rounded-md p-1
+}
+
+.button:hover {
+    @apply cursor-pointer brightness-90 transition-all duration-500 scale-105 ease-in-out
+}
+
+.button-deactive {
+    @apply font-bold text-black rounded-md p-1 opacity-50
+}
+
+.item-view {
+    @apply bg-brand-950 rounded-md p-3 h-180 overflow-y-auto
+}
+
+.side-form-label {
+    @apply font-bold text-3xl mb-3
+}
+
+.side-form-input {
+    @apply border-2 border-gray-300 rounded-md p-2 w-full mb-3
+}
+
+input:invalid {
+    border-color: red;
+
+}
+
+.delete-button {
+    @apply text-black font-bold rounded-full h-7 w-7 bg-red-600
 }

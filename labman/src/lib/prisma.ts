@@ -1,5 +1,10 @@
-﻿import { PrismaClient } from "@/generated/prisma";
+﻿import { PrismaClient } from '@/generated/prisma'
 
-const prisma = new PrismaClient();
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
-export default prisma;
+export const prisma =
+    globalForPrisma.prisma || new PrismaClient()
+// Prevent creation of duplicate Prisma Clients/connections to database in dev environment
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
+export default prisma
