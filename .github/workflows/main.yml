@@ -5,6 +5,10 @@ on:
   pull_request:
     branches: [ main, master ]
 
+defaults:
+  run:
+    working-directory: ./labman    
+
 jobs:
 
   playwright:
