@@ -50,6 +50,8 @@ jobs:
       
 
       - name: Install Playwright Browsers
+        env:
+          HOME: /root
         run: npx playwright install --with-deps    
 
       - name: Run tests
