@@ -10,27 +10,54 @@ defaults:
     working-directory: ./labman    
 
 jobs:
-
-  playwright:
-    timeout-minutes: 60
+  # Label of the container job
+  container-job:
+    # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    container: node:20-bookworm-slim
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
       - name: Install dependencies
         run: npm install
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+
+      - name: Connect to PostgreSQL container
+        run: node testConnect.ts
+
+        env:
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+
+     # - name: Install Playwright Browsers
+      #  run: npx playwright install --with-deps
+      #- name: Run Playwright tests
+       # run: npx playwright test
+      #- uses: actions/upload-artifact@v4
+       # if: ${{ !cancelled() }}
+        #with:
+         # name: playwright-report
+          #path: playwright-report/
+          #retention-days: 30
 
   vitest:
     runs-on: ubuntu-latest
