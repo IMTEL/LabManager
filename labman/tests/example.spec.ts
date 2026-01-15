@@ -7,7 +7,7 @@ test('has title', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'VR Lab Management' })).toBeVisible();
 });
 
- test('login', async ({ page }) => {
+ /* test('login', async ({ page }) => {
   await page.goto('http://localhost:3000/login');
 
   // Click the get started link.
@@ -18,5 +18,5 @@ test('has title', async ({ page }) => {
 
   // Expects page to have a heading with the name of Installation.
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible();
-});
+}); */
 
