@@ -11,7 +11,7 @@ test('has title', async ({ page }) => {
   await page.goto('http://localhost:3000/login');
 
   // Click the get started link.
-  await page.getByPlaceholder("Username").fill("ola");
+  await page.getByPlaceholder("Username").fill("test");
   await page.getByPlaceholder("Password").fill("1234");
 
   await page.getByRole('button', { name: 'Login' }).click();

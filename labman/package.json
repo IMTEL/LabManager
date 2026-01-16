@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "playwright:test": "dotenv -e .env.test -- next dev --turbopack",
+    "migrate:test": "dotenv -e .env.test -- npx prisma migrate deploy"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -35,6 +37,7 @@
     "eslint-config-next": "15.4.6",
     "jsdom": "^27.4.0",
     "tailwindcss": "^4.1.18",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"
