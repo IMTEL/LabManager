@@ -46,6 +46,8 @@ jobs:
 
       - name: Create test user
         run: npx tsx testDb.ts
+        env:
+          NODE_ENV: test
       
 
       - name: Install Playwright Browsers
