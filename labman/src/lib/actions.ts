@@ -170,7 +170,6 @@ export async function addLoan (borrower : string, start : string, end : string, 
             activeLoanId: loan.id
         }
     })
-    console.log(item.activeLoan);
     revalidatePath("/");
     return loan;
 }

@@ -44,9 +44,21 @@ interface CardProps {
 
 export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: CardProps) {
 
-    const name = loan?.item.equipment.name || user?.username;
+    let {name, start, last} = {name: "", start: "", last: ""};
+
+    if (user) {
+        name = user.username;
+        start = new Date(user.createdAt).toLocaleDateString("no");
+        last = new Date(user.latestActivity).toLocaleDateString("no");
+    } else if (loan) {
+        name = loan.item.equipment.name
+        start = loan.startDate.toLocaleDateString("no");
+        last = loan.endDate.toLocaleDateString("no");
+    }
+
+    /* const name = loan?.item.equipment.name || user?.username;
     const start = loan?.startDate.toLocaleDateString("no") || new Date(user.createdAt).toLocaleDateString("no");
-    const last = loan?.endDate.toLocaleDateString("no") || new  Date(user.latestActivity).toLocaleDateString("no");
+    const last = loan?.endDate.toLocaleDateString("no") || new  Date(user.latestActivity).toLocaleDateString("no"); */
 
     if (loan) {
         if (new Date(loan.endDate) < new Date() && loan.status === "Active") {
@@ -92,7 +104,7 @@ export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: 
 
             <div className="mb-3 ml-4 mt-5 flex gap-2">
                 <button className="button bg-blue-600">Edit</button>
-                <button onClick={() => deleteLoan && loan ? deleteLoan(loan.id) : deleteUser(user.id)} className="button bg-red-600">Delete</button>
+                <button onClick={() => deleteLoan && loan ? deleteLoan(loan.id) : deleteUser && user ? deleteUser(user.id) : alert("Error")} className="button bg-red-600">Delete</button>
                 { loan && loan.status != "Returned" && <button onClick={() => returnLoan ? returnLoan(loan.id) : alert("Error")} className="button bg-green-500 ml-auto mr-3">Return</button>}
             </div>
 

@@ -29,7 +29,6 @@ interface LoanViewProps {
 
 export default function LoanView({setSideView, equipmentData, setAllEquipment, setSelectedEquipment} : LoanViewProps) {
     const [borrowers, setBorrowers] = useState<Borrower[]>([]);
-
     useEffect(() => {
         fetch("/api/borrower")
         .then(res => res.json())
@@ -180,12 +179,11 @@ export default function LoanView({setSideView, equipmentData, setAllEquipment, s
                         <div className="item-view">
                             <div className="mb-10">
                                 {equipmentData.items.map((unit, index) => (
-                                   console.log(unit.activeLoan),
                                    hasActiveLoan = unit.activeLoan != null,
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
-                                        { hasActiveLoan && (unit.activeLoan.status !== "Returned") && <h1 className="text-black font-bold">Borrowed</h1>}
-                                        { (!hasActiveLoan || (hasActiveLoan && unit.activeLoan.status === "Returned")) && <button
+                                        { unit.activeLoan && (unit.activeLoan.status !== "Returned") && <h1 className="text-black font-bold">Borrowed</h1>}
+                                        { (unit.activeLoan == null || unit.activeLoan.status === "Returned") && <button
                                             className="bg-white h-8 w-8 border-black border-1 rounded-full flex items-center justify-center"
                                             onClick={() => setSelectedUnit(unit)}>
                                             <div className={selectedUnit == unit ? "bg-blue-600 h-4 w-4 rounded-full" : ""}></div>

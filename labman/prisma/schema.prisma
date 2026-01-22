@@ -25,7 +25,7 @@ model Equipment {
   id         Int               @id @default(autoincrement())
   categoryId Int
   name       String            @unique
-  image      String
+  image      String?
   createdAt  DateTime          @default(now())
   items      Item[]
   category   EquipmentCategory @relation(fields: [categoryId], references: [id])

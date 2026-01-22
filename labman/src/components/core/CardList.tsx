@@ -113,7 +113,6 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
         setLoans(prev => prev.filter(loan => loan.id !== loanId));
         await deleteLoan(loanId)
     }
-    console.log(users)
 
     return (
         <div className={"ml-5 mt-5"}>

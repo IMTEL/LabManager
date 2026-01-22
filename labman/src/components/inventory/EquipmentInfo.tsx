@@ -164,8 +164,8 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                                     hasActiveLoan = unit.activeLoan != null,
                                     <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                         <h1 className="font-bold text-xl text-black">Unit {index + 1}</h1>
-                                        { hasActiveLoan && (unit.activeLoan.status !== "Returned") && <h1 className="text-black font-bold">Borrowed</h1>}
-                                        { (!hasActiveLoan || (hasActiveLoan && unit.activeLoan.status === "Returned")) && <button className="text-black font-bold rounded-full h-7 w-7 bg-red-600 border border-black" onClick={() => handleDeleteUnit(unit.id)}>-</button>}
+                                        { unit.activeLoan && unit.activeLoan.status !== "Returned" && <h1 className="text-black font-bold">Borrowed</h1>}
+                                        { (unit.activeLoan == null || unit.activeLoan.status === "Returned") && <button className="text-black font-bold rounded-full h-7 w-7 bg-red-600 border border-black" onClick={() => handleDeleteUnit(unit.id)}>-</button>}
                                     </div>
                                 )) }
                             </div>

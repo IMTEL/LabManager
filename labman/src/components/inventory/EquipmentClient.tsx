@@ -64,7 +64,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
     // Adding equipment to the database based on form input
     async function handleSubmit(e: React.FormEvent) {
-        if (!name || !category || !image) return;
+        if (!name || !category) return;
         e.preventDefault();
 
         const res = await fetch("/api/equipment", {
@@ -134,8 +134,8 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                         <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                        <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                        <button type="submit">Add Equipment</button>
+                        {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
+                        <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
                     </form>
 
                     <div className="grid grid-cols-2 mt-10 mb-5">
