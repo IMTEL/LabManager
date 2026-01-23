@@ -1,48 +1,16 @@
 ﻿"use client"
 
-import {User} from "@/generated/prisma";
-
-
-
-type Loan = {
-    id: number;
-    startDate: Date;
-    endDate: Date;
-    status: string;
-
-    borrower: {
-        id: number;
-        name: string;
-        phone?: string | null;
-        email?: string | null
-        note?: string | null
-        creationDate: Date;
-
-    }
-    item: {
-        id: number;
-        equipment: {
-            id: number;
-            name: string;
-            categoryId: number;
-            image: string;
-            createdAt: Date;
-
-        }
-    };
-}
+import {UserClass} from "@/types/User";
+import {LoanClass} from "@/types/Loan";
 
 interface CardProps {
-    user?: User
-    loan?: Loan;
-    returnLoan?: (id: number) => void
-    deleteLoan?: (id: number) => void
-    deleteUser?: (id: number) => void
+    user?: UserClass
+    loan?: LoanClass;
 }
 
 // TODO: Could have a button to reactivate a loan, not a priority right now
 
-export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: CardProps) {
+export default function Card({ loan, user }: CardProps) {
 
     let {name, start, last} = {name: "", start: "", last: ""};
 
@@ -104,8 +72,8 @@ export default function Card({ loan, user, returnLoan, deleteLoan, deleteUser}: 
 
             <div className="mb-3 ml-4 mt-5 flex gap-2">
                 <button className="button bg-blue-600">Edit</button>
-                <button onClick={() => deleteLoan && loan ? deleteLoan(loan.id) : deleteUser && user ? deleteUser(user.id) : alert("Error")} className="button bg-red-600">Delete</button>
-                { loan && loan.status != "Returned" && <button onClick={() => returnLoan ? returnLoan(loan.id) : alert("Error")} className="button bg-green-500 ml-auto mr-3">Return</button>}
+                <button onClick={() => loan ? loan.delete() : user ? user.delete() : alert("Error")} className="button bg-red-600">Delete</button>
+                { loan && loan.status != "Returned" && <button onClick={() => loan.return()} className="button bg-green-500 ml-auto mr-3">Return</button>}
             </div>
 
         </div>

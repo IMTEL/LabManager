@@ -78,8 +78,8 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        // Check so no fields are empty
-        if (!formData.name?.trim() || !formData.category?.trim() || !formData.image?.trim()) {
+        // Check so required fields are not empty (image is optional)
+        if (!formData.name?.trim() || !formData.category?.trim()) {
             alert("Please fill in all fields");
             setFormData(initialFormData);
             return;
@@ -146,12 +146,12 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                                    value={formData.category}
                                    onChange={(e) => setFormData({...formData, category: e.target.value})}
                                    className="side-form-input" />
-                               <label className="side-form-label">Image:</label>
-                               <input
+                               {/*<label className="side-form-label">Image:</label>
+                                <input
                                    type="text"
                                    value={formData.image}
                                    onChange={(e) => setFormData({...formData, image: e.target.value})}
-                                   className="side-form-input" />
+                                   className="side-form-input" /> */}
                            </form>
                         </div>
                         <span>---------------------------------------------------------------------------------------</span>

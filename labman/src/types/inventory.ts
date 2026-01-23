@@ -3,7 +3,7 @@
 export type Equipment = {
     id: number;
     name: string;
-    image: string;
+    image: string | null;
     category: {
         id: number;
         name: string;

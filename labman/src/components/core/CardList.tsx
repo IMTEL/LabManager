@@ -2,7 +2,9 @@
 import Card from "@/components/core/Card";
 import {useState} from "react";
 import {User} from "@/generated/prisma";
+import {UserClass} from "@/types/User";
 import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
+import {LoanClass} from "@/types/Loan";
 
 
 type Loans = {
@@ -26,7 +28,7 @@ type Loans = {
             id: number;
             name: string;
             categoryId: number;
-            image: string;
+            image: string | null;
             createdAt: Date;
 
         }
@@ -125,24 +127,52 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
                 </form>
             </div>}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {loans.map(loan => {
-                    if (loan.status === "Returned") return;
-                    return <Card loan={loan} returnLoan={handleReturnLoan} deleteLoan={handleDeleteLoan} key={loan.id} />;
+                {loans.filter(loanDto => loanDto.status !== "Returned").map(loanDto => {
+                    const loan = new LoanClass(
+                        loanDto.id,
+                        loanDto.status,
+                        loanDto.startDate,
+                        loanDto.endDate,
+                        loanDto.borrower,
+                        loanDto.item,
+                        {
+                            deleteLoan: async (id : number) => handleDeleteLoan(id),
+                            returnLoan: async (id : number) => handleReturnLoan(id)
+                        }
+                    )
+                    return <Card loan={loan} key={loan.id} />;
                 })}
-                {users.map(user => {
-                   return <Card user={user} key={user.id} deleteUser={handleDeleteUser} />;
+                {users.map(userDto => {
+                    const user = new UserClass(
+                        userDto.id,
+                        userDto.username,
+                        userDto.createdAt,
+                        userDto.latestActivity,
+                        {
+                            deleteUser: async (id: number) => handleDeleteUser(id)
+                        }
+                    )
+                   return <Card user={user} key={user.id} />;
                 })}
             </div>
             {hasReturnedLoans && (
                 <div className={"mt-10"}>
                     <h1 className={"text-4xl font-bold"}>Returned loans:</h1>
                     <div className=" mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {loans.map((loan) => {
-                            if (loan.status === "Returned") {
-                                return (
-                                    <Card loan={loan} key={loan.id} deleteLoan={handleDeleteLoan} />
-                                )
-                            }
+                        {loans.filter(loanDto => loanDto.status === "Returned").map(loanDto => {
+                            const loan = new LoanClass(
+                                loanDto.id,
+                                loanDto.status,
+                                loanDto.startDate,
+                                loanDto.endDate,
+                                loanDto.borrower,
+                                loanDto.item,
+                                {
+                                    deleteLoan: async (id : number) => handleDeleteLoan(id),
+                                    returnLoan: async (id : number) => handleReturnLoan(id)
+                                }
+                            )
+                            return <Card loan={loan} key={loan.id} />;
                         })}
                     </div>
                 </div>
