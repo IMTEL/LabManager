@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { League_Spartan } from "next/font/google";
 import NavBar from "@/components/core/NavBar";
-import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
-import {validateSessionToken} from "@/auth/session";
-import {getSession, getUser} from "@/lib/actions";
+import {PopupProvider} from "./popupProvider"
+import {getUser} from "@/lib/actions";
 import SideBar from "@/components/core/SideBar";
 
 const spartan = League_Spartan({
@@ -40,7 +38,9 @@ export default async function RootLayout({
 
             <main className="flex-1 overflow-auto">
                 <NavBar username={user?.username ?? "Unknown"} />
-                {children}
+                <PopupProvider>
+                    {children}
+                </PopupProvider>
             </main>
         </div>
       </body>

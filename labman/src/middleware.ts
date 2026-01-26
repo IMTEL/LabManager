@@ -22,4 +22,4 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
 }
 
-export const config = {matcher: ["/", "/users"]};
+export const config = {matcher: ["/", "/users", "/loans"]};
