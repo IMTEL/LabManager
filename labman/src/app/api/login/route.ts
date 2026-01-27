@@ -8,9 +8,10 @@ export async function POST(req: Request) {
     const { username, password } = await req.json();
 
     const user = await prisma.user.findUnique({where: { username }});
+    console.log(user);
     // Check if the user exists
-    if (!user) return Response.json({ error: "Invalid credentials"}, { status: 401 } )
-    if (!( await comparePassword(password, user.hashedPassword))) return Response.json({ error: "Invalid credentials"}, { status: 401 } )
+    if (!user) return Response.json({ error: "Username not found"}, { status: 401 } )
+    if (!( await comparePassword(password, user.hashedPassword))) return Response.json({ error: "Invalid password"}, { status: 401 } )
 
     // Create a session for the user
     const session = await createSession(user.id);

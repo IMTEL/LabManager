@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { League_Spartan } from "next/font/google";
 import NavBar from "@/components/core/NavBar";
-import {PopupProvider} from "./popupProvider"
+//import {PopupProvider} from "./popupProvider"
 import {getUser} from "@/lib/actions";
 import SideBar from "@/components/core/SideBar";
 
@@ -38,9 +38,7 @@ export default async function RootLayout({
 
             <main className="flex-1 overflow-auto">
                 <NavBar username={user?.username ?? "Unknown"} />
-                <PopupProvider>
-                    {children}
-                </PopupProvider>
+                {children}
             </main>
         </div>
       </body>

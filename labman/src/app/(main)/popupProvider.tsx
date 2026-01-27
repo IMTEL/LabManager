@@ -1,4 +1,4 @@
-﻿"use client"
+﻿/*"use client"
 import {createContext, useState} from "react";
 
 export const popupContext = createContext(null);
@@ -19,4 +19,4 @@ export const PopupProvider = ({children}) => {
             </>
         </popupContext.Provider>
     )
-}
+} */

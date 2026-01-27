@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "build": "dotenv -e .env.production -- next build",
+    "start": "dotenv -e .env.production -- next start",
     "lint": "next lint",
     "test": "vitest",
     "playwright:test": "dotenv -e .env.test -- next dev --turbopack",

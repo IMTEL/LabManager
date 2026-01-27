@@ -161,7 +161,7 @@ export async function addLoan (borrower : string, start : string, end : string, 
         }
     })
 
-    const item = await prisma.item.update({
+    await prisma.item.update({
         where: {
             id: unitId
         },
