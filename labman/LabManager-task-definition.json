@@ -34,7 +34,7 @@
             "secrets": [
               {
                 "name": "DATABASE_URL",
-                "valueFrom": "arn:aws:secretsmanager:eu-north-1:861353196312:secret:lab/prod/db-connection-3F8gP9"
+                "valueFrom": "arn:aws:secretsmanager:eu-north-1:861353196312:secret:lab/prod/db-connection-3F8gP9:DATABASE_URL::"
 
               }
             ]
