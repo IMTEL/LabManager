@@ -134,8 +134,10 @@ export async function addLoan (borrower : string, start : string, end : string, 
     if (!user) {alert("Could not find a valid user"); return}
 
     // Normalize empty strings to null for optional fields
-    const normalizedPhone = phone?.trim() === '' ? null : phone?.trim() || null;
-    const normalizedEmail = email?.trim() === '' ? null : email?.trim() || null;
+    const trimmedPhone = phone?.trim();
+    const trimmedEmail = email?.trim();
+    const normalizedPhone = !trimmedPhone ? null : trimmedPhone;
+    const normalizedEmail = !trimmedEmail ? null : trimmedEmail;
 
     // Try to find existing borrower by phone or email
     let borrowerUser = null;
