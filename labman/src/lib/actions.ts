@@ -134,24 +134,22 @@ export async function addLoan (borrower : string, start : string, end : string, 
     if (!user) {alert("Could not find a valid user"); return}
 
     // Normalize empty strings to null for optional fields
-    const normalizedPhone = phone?.trim() || null;
-    const normalizedEmail = email?.trim() || null;
+    const normalizedPhone = phone?.trim() === '' ? null : phone?.trim() || null;
+    const normalizedEmail = email?.trim() === '' ? null : email?.trim() || null;
 
     // Try to find existing borrower by phone or email
     let borrowerUser = null;
-    if (normalizedPhone) {
-        borrowerUser = await prisma.borrower.findUnique({
+    
+    if (normalizedPhone || normalizedEmail) {
+        const whereConditions = [];
+        if (normalizedPhone) whereConditions.push({ phone: normalizedPhone });
+        if (normalizedEmail) whereConditions.push({ email: normalizedEmail });
+        
+        borrowerUser = await prisma.borrower.findFirst({
             where: {
-                phone: normalizedPhone
+                OR: whereConditions
             }
-        })
-    }
-    if (!borrowerUser && normalizedEmail) {
-        borrowerUser = await prisma.borrower.findUnique({
-            where: {
-                email: normalizedEmail
-            }
-        })
+        });
     }
     
     if (!borrowerUser) {
