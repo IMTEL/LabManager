@@ -126,22 +126,46 @@ export async function updateEquipment (equipmentId: number, name: string, catego
     return equipment;
 }
 
-export async function addLoan (borrower : string, start : string, end : string, unitId : number, phone? : string, email? : string) {
+export async function addLoan (borrowerName : string, start : string, end : string, unitId : number, phone : string | null, email : string | null) {
     const dateStart = new Date(start);
     const dateEnd = new Date(end);
     const user = await getUser();
 
     if (!user) {alert("Could not find a valid user"); return}
 
-    let borrowerUser = await prisma.borrower.findUnique({
-        where: {
-            phone: phone
-        }
-    })
-    if (!borrowerUser) {
-        borrowerUser = await prisma.borrower.create({
+    let borrower;
+
+    // If phone or email is actually empty, set it to null
+    if (phone?.trim() === "") {phone = null}
+
+    if (email?.trim() === "") {email = null}
+
+    if (phone) {
+        borrower = await prisma.borrower.findUnique({where:{phone: phone}})
+       /* if (borrower && borrower.name !== borrowerName) {
+           if  (window.confirm(`A borrower with the same phone number already exists with a different name (${borrower.name}). Click OK to assign this loan to ${borrowerName}. Click Cancel to assign it to ${borrower.name} instead.`)) {
+               borrower = null;
+           }
+        } */
+
+    } else if (email)  {
+        borrower = await prisma.borrower.findUnique({where:{email: email}})
+        /*if (borrower && borrower.name !== borrowerName) {
+           if  (window.confirm(`A borrower with the same email already exists with a different name (${borrower.name}). Click OK to assign this loan to ${borrowerName}. Click Cancel to assign it to ${borrower.name} instead.`)) {
+               borrower = null;
+           }
+        } */
+    } else {
+        alert("No borrower phone/email provided"); return;
+    }
+
+
+
+
+    if (!borrower) {
+        borrower = await prisma.borrower.create({
             data: {
-                name: borrower,
+                name: borrowerName,
                 phone: phone,
                 email: email,
                 note: "",
@@ -155,7 +179,7 @@ export async function addLoan (borrower : string, start : string, end : string, 
             startDate: dateStart,
             endDate: dateEnd,
             status: "Active",
-            borrowerId: borrowerUser.id,
+            borrowerId: borrower.id,
             userId: user.id,
             itemId: unitId
         }
