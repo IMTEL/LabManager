@@ -1,0 +1,97 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:eu-north-1:861353196312:task-definition/LabManager-task:1",
+    "containerDefinitions": [
+        {
+            "name": "nextjs-lab",
+            "image": "861353196312.dkr.ecr.eu-north-1.amazonaws.com/lab-repository@sha256:e7cdbf6f8318d5c7a55d534faa467df83a3dd9f9e9663068abef74fd19ff41d1",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "main",
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/LabManager-task",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "eu-north-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": [],
+            "secrets": [
+              {
+                "name": "DATABASE_URL",
+                "valueFrom": "arn:aws:secretsmanager:eu-north-1:861353196312:secret:lab/prod/db-connection-3F8gP9:DATABASE_URL::"
+
+              }
+            ]
+        }
+    ],
+    "family": "LabManager-task",
+    "executionRoleArn": "arn:aws:iam::861353196312:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE",
+        "MANAGED_INSTANCES"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2026-01-29T14:16:22.647Z",
+    "registeredBy": "arn:aws:iam::861353196312:root",
+    "enableFaultInjection": false,
+    "tags": []
+}
