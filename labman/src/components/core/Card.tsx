@@ -6,11 +6,13 @@ import {LoanClass} from "@/types/Loan";
 interface CardProps {
     user?: UserClass
     loan?: LoanClass;
+    setSideView?: (view: string) => void;
+    setSelectedLoanId?: (id: number | null) => void;
 }
 
 // TODO: Could have a button to reactivate a loan, not a priority right now
 
-export default function Card({ loan, user }: CardProps) {
+export default function Card({ loan, user, setSelectedLoanId, setSideView }: CardProps) {
 
     let {name, start, last} = {name: "", start: "", last: ""};
 
@@ -67,7 +69,12 @@ export default function Card({ loan, user }: CardProps) {
             </div>}
 
             <div className="mb-3 ml-4 mt-5 flex gap-2">
-                <button className="button bg-blue-600">Edit</button>
+                <button className="button bg-blue-600" onClick={() => {
+                    if (setSideView && setSelectedLoanId && loan) {
+                        setSideView("loanEdit");
+                        setSelectedLoanId(loan.id);
+                    }
+                }}>Edit</button>
                 <button onClick={() => loan ? loan.delete() : user ? user.delete() : alert("Error")} className="button bg-red-600">Delete</button>
                 { loan && loan.status != "Returned" && <button onClick={() => loan.return()} className="button bg-green-500 ml-auto mr-3">Return</button>}
             </div>

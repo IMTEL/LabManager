@@ -5,6 +5,7 @@ import {User} from "@/generated/prisma";
 import {UserClass} from "@/types/User";
 import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
 import {LoanClass} from "@/types/Loan";
+import EditLoan from "@/components/loans/EditLoan";
 
 
 type Loans = {
@@ -50,6 +51,10 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    const [sideView, setSideView] = useState("");
+    const [selectedLoanId, setSelectedLoanId] = useState<number | null>(null);
+
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -118,6 +123,12 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
 
     return (
         <div className={"ml-5 mt-5"}>
+            { sideView == "loanEdit" && selectedLoanId && <EditLoan
+                loan={loans.find(loan => loan.id === selectedLoanId)!}
+                setSideView={setSideView}
+                setLoans={setLoans}
+
+            />}
             { users.length !== 0 && <div className={"mb-15"}>
                 <form onSubmit={handleSubmit}>
                     <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name="username" placeholder="Username" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
@@ -140,7 +151,7 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
                             returnLoan: async (id : number) => handleReturnLoan(id)
                         }
                     )
-                    return <Card loan={loan} key={loan.id} />;
+                    return <Card loan={loan} setSelectedLoanId={setSelectedLoanId} setSideView={setSideView} key={loan.id} />;
                 })}
                 {users.map(userDto => {
                     const user = new UserClass(

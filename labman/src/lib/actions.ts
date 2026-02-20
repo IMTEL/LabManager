@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma"
 import {revalidatePath} from "next/cache";
 import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
+import {Borrower} from "@/generated/prisma";
 
 export async function deleteUser(userId : number) {
 
@@ -126,27 +127,41 @@ export async function updateEquipment (equipmentId: number, name: string, catego
     return equipment;
 }
 
-export async function addLoan (borrowerName : string, start : string, end : string, unitId : number, phone : string | null, email : string | null) {
-    const dateStart = new Date(start);
-    const dateEnd = new Date(end);
+export async function addBorrower(name: string, phone?: string | null, email?: string | null, borrowerId?: number) : Promise<Borrower | null> {
     const user = await getUser();
+    if (!user) {alert("Could not find a valid user"); return null}
+    let borrower : Borrower | null = null;
 
-    if (!user) {alert("Could not find a valid user"); return}
-
-    let borrower;
 
     // If phone or email is actually empty, set it to null
     if (phone?.trim() === "") {phone = null}
-
     if (email?.trim() === "") {email = null}
+
+    // If borrowerId is provided, update the borrower with the provided information
+    if (borrowerId) {
+        borrower = await prisma.borrower.findUnique({where:{id: borrowerId}})
+        /* TODO: Potentially unsafe. The function can in theory be called with an unrelated id updating the wrong borrower
+            Since the unique values phone and mail can change they can't be used to verify the borrower.
+            A possible solution is to compare the old values with what is currently stored in the database.
+            But it shouldn't really be a big deal as there is now way for the client to abuse it.*/
+        if (!borrower) {alert("Could not find borrower with id " + borrowerId); return null}
+
+        borrower = await prisma.borrower.update(
+            {
+                where: {id: borrowerId},
+                data: {name: name, phone: phone, email: email}
+            }
+        )
+        return borrower;
+    }
 
     if (phone) {
         borrower = await prisma.borrower.findUnique({where:{phone: phone}})
-       /* if (borrower && borrower.name !== borrowerName) {
-           if  (window.confirm(`A borrower with the same phone number already exists with a different name (${borrower.name}). Click OK to assign this loan to ${borrowerName}. Click Cancel to assign it to ${borrower.name} instead.`)) {
-               borrower = null;
-           }
-        } */
+        /* if (borrower && borrower.name !== borrowerName) {
+            if  (window.confirm(`A borrower with the same phone number already exists with a different name (${borrower.name}). Click OK to assign this loan to ${borrowerName}. Click Cancel to assign it to ${borrower.name} instead.`)) {
+                borrower = null;
+            }
+         } */
 
     } else if (email)  {
         borrower = await prisma.borrower.findUnique({where:{email: email}})
@@ -156,16 +171,13 @@ export async function addLoan (borrowerName : string, start : string, end : stri
            }
         } */
     } else {
-        alert("No borrower phone/email provided"); return;
+        alert("No borrower phone/email provided"); return null;
     }
-
-
-
 
     if (!borrower) {
         borrower = await prisma.borrower.create({
             data: {
-                name: borrowerName,
+                name: name,
                 phone: phone,
                 email: email,
                 note: "",
@@ -173,6 +185,42 @@ export async function addLoan (borrowerName : string, start : string, end : stri
             }
         })
     }
+    return borrower;
+}
+
+export async function updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, phone? : string | null, email? : string | null) {
+    if (await getUser() === null) {alert("Could not find a valid user"); return}
+
+    const borrower = await addBorrower(borrowerName, phone, email, borrowerId)
+    if (!borrower) {return}
+
+    const loan = await prisma.loan.update({
+        where: {
+            id: loanId
+        },
+        data: {
+            startDate: start,
+            endDate: end,
+            borrowerId: borrower.id
+        },
+        include: {
+            borrower: true,
+            item: { include: { equipment: true }}
+        }
+    })
+    revalidatePath("/loans");
+    return (loan)
+
+}
+
+export async function addLoan (borrowerName : string, start : string, end : string, unitId : number, phone : string | null, email : string | null) {
+    const dateStart = new Date(start);
+    const dateEnd = new Date(end);
+    const user = await getUser();
+    if (!user) {alert("Could not find a valid user"); return}
+
+    const borrower = await addBorrower(borrowerName, phone, email)
+    if (!borrower) {return}
 
     const loan = await prisma.loan.create({
         data: {
@@ -209,7 +257,9 @@ export async function getUser() {
                 }
             })
             return tSession?.user;
-        }
+    } else {
+        return null;
+    }
 
 }
 

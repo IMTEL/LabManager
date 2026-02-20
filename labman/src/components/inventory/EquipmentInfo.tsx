@@ -91,7 +91,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
       const updatedEq = await updateEquipment(equipmentData!.id, formData.name!, formData.category!, formData.image!)
 
       const updatedEquipment = {
-          ...equipmentData!,
+          ...equipmentData,
           name: updatedEq.name,
           category: {
               id: updatedEq.category.id,
@@ -128,7 +128,7 @@ export default function EquipmentInfo({equipmentData, setSideView, setAllEquipme
                         <h1 className="text-5xl font-bold">Equipment information</h1>
                         <div className="mt-7 mb-10">
                             <button form="equipmentDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? " bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
-                            <button onClick={() => {setFormData(initialFormData)}} className="bg-yellow-500 button mr-10">Undo</button>
+                            <button onClick={() => {setFormData(initialFormData)}} className={JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-yellow-500 button-deactive mr-10" : "bg-yellow-500 button mr-10"}>Undo</button>
                             <button onClick={() => {deleteEquipment(equipmentData!.name); setSideView("")}} className="bg-red-600 button">Delete equipment</button>
                         </div>
 
