@@ -3,34 +3,8 @@
 import {loanCount} from "@/utils/inventoryUtils";
 import {useEffect, useState} from "react";
 import {updateLoan} from "@/lib/actions";
+import {Loan} from "@/types/Loan";
 
-type Loan = {
-    id: number;
-    startDate: Date;
-    endDate: Date;
-    status: string;
-
-    borrower: {
-        id: number;
-        name: string;
-        phone?: string | null;
-        email?: string | null
-        note?: string | null
-        creationDate: Date;
-
-    }
-    item: {
-        id: number;
-        equipment: {
-            id: number;
-            name: string;
-            categoryId: number;
-            image: string | null;
-            createdAt: Date;
-
-        }
-    }
-}
 
 type Borrower = {
     id: number;
@@ -58,7 +32,7 @@ export default function EditLoan({loan, setSideView, setLoans}: EditLoanProps) {
         fetch("/api/borrower")
             .then(res => res.json())
             .then(data => setBorrowers(data))
-    }, []);
+    }, [initialFormData]);
 
 
     async function handleSubmit(e: React.FormEvent) {
@@ -73,17 +47,24 @@ export default function EditLoan({loan, setSideView, setLoans}: EditLoanProps) {
             alert("Please fill in all required fields");
             return;
         }
+        let updatedLoan: Loan;
+        const res = await updateLoan(
+                loan.id,
+                formData.startDate,
+                formData.endDate,
+                formData.borrower,
+                loan.borrower.id,
+                formData.borrowerPhone,
+                formData.borrowerMail
+            );
+        console.log(res);
 
-        const updatedLoan = await updateLoan(
-            loan.id,
-            formData.startDate,
-            formData.endDate,
-            formData.borrower,
-            loan.borrower.id,
-            formData.borrowerPhone,
-            formData.borrowerMail
-        );
-        if (!updatedLoan) return;
+        if (res.type === "error") {
+            alert(res.message);
+            return;
+        } else if (res.type === "success") {
+            updatedLoan = res.data;
+        }
 
         setLoans(prev =>
             prev.map(loan => loan.id === updatedLoan.id ? updatedLoan : loan)
@@ -176,9 +157,15 @@ export default function EditLoan({loan, setSideView, setLoans}: EditLoanProps) {
                                     pattern="[0-9]{8}"
                                     className="side-form-input"
                                     onChange={(e) => {
-                                        console.log(e.target.value);
+                                        e.target.setCustomValidity("");
+                                        if (e.target.value.length === 8) {
+                                            if (borrowers.find(borrower => borrower.phone === e.target.value && borrower.id !== loan.borrower.id)) {
+                                                e.target.setCustomValidity("A borrower with the same phone number already exists");
+                                                e.target.reportValidity();
+                                            }
+                                        }
                                         setFormData({...formData, borrowerPhone: e.target.value})
-                                        console.log(formData);
+
                                     }}
                                 />
                                 <label className="side-form-label">Borrower email:</label>
@@ -188,6 +175,13 @@ export default function EditLoan({loan, setSideView, setLoans}: EditLoanProps) {
                                     type="email"
                                     className="side-form-input"
                                     onChange={(e) => {
+                                        e.target.setCustomValidity("");
+                                        if (e.target.checkValidity()) {
+                                            if (borrowers.find(borrower => borrower.email === e.target.value && borrower.id !== loan.borrower.id)) {
+                                                e.target.setCustomValidity("A borrower with the same email already exists");
+                                                e.target.reportValidity();
+                                            }
+                                        }
                                         setFormData({...formData, borrowerMail: e.target.value})
                                     }}
                                 />

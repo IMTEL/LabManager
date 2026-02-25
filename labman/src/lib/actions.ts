@@ -4,6 +4,9 @@ import {revalidatePath} from "next/cache";
 import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
 import {Borrower} from "@/generated/prisma";
+import {Loan} from "@/types/Loan";
+
+type ActionResult<T> = | { type: "success"; data: T} | { type: "confirm"; message: string} | { type: "error"; message: string}
 
 export async function deleteUser(userId : number) {
 
@@ -127,9 +130,9 @@ export async function updateEquipment (equipmentId: number, name: string, catego
     return equipment;
 }
 
-export async function addBorrower(name: string, phone?: string | null, email?: string | null, borrowerId?: number) : Promise<Borrower | null> {
+export async function addBorrower(name: string, phone?: string | null, email?: string | null, borrowerId?: number) : Promise<ActionResult<Borrower>> {
     const user = await getUser();
-    if (!user) {alert("Could not find a valid user"); return null}
+    if (!user) {return {type: "error", message: "Could not find a valid user"}}
     let borrower : Borrower | null = null;
 
 
@@ -144,7 +147,20 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
             Since the unique values phone and mail can change they can't be used to verify the borrower.
             A possible solution is to compare the old values with what is currently stored in the database.
             But it shouldn't really be a big deal as there is now way for the client to abuse it.*/
-        if (!borrower) {alert("Could not find borrower with id " + borrowerId); return null}
+        if (!borrower) {return {type: "error", message: "Could not find borrower with id " + borrowerId}}
+
+
+        if (phone && borrower.phone !== phone) {
+            console.log("Phone number has changed, checking for duplicates")
+            if (await prisma.borrower.findUnique({where:{phone: phone}})) {
+                console.log("Borrower with phone number already exists")
+
+                return {type: "error", message: `A borrower with the same phone number already exists.`}
+            }
+        } else if (email && borrower.email !== email) {
+            if (await prisma.borrower.findUnique({where:{email: email}}))
+                return {type: "error", message: `A borrower with the same email already exists.`}
+        }
 
         borrower = await prisma.borrower.update(
             {
@@ -152,7 +168,7 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
                 data: {name: name, phone: phone, email: email}
             }
         )
-        return borrower;
+        return {type: "success", data: borrower};
     }
 
     if (phone) {
@@ -171,7 +187,7 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
            }
         } */
     } else {
-        alert("No borrower phone/email provided"); return null;
+       return {type: "error", message: "No borrower phone/email provided"}
     }
 
     if (!borrower) {
@@ -185,14 +201,14 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
             }
         })
     }
-    return borrower;
+    return {type: "success", data: borrower};
 }
 
-export async function updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, phone? : string | null, email? : string | null) {
-    if (await getUser() === null) {alert("Could not find a valid user"); return}
+export async function updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, phone? : string | null, email? : string | null) : Promise<ActionResult<Loan>>  {
+    if (await getUser() === null) {return {type:"error", message: "Could not find a valid user"}}
 
-    const borrower = await addBorrower(borrowerName, phone, email, borrowerId)
-    if (!borrower) {return}
+    const res = await addBorrower(borrowerName, phone, email, borrowerId)
+    if (res.type !== "success") {return {type: "error", message: res.message}}
 
     const loan = await prisma.loan.update({
         where: {
@@ -201,7 +217,7 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
         data: {
             startDate: start,
             endDate: end,
-            borrowerId: borrower.id
+            borrowerId: res.data.id
         },
         include: {
             borrower: true,
@@ -209,7 +225,7 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
         }
     })
     revalidatePath("/loans");
-    return (loan)
+    return {type: "success", data: loan};
 
 }
 
@@ -219,15 +235,15 @@ export async function addLoan (borrowerName : string, start : string, end : stri
     const user = await getUser();
     if (!user) {alert("Could not find a valid user"); return}
 
-    const borrower = await addBorrower(borrowerName, phone, email)
-    if (!borrower) {return}
+    const res = await addBorrower(borrowerName, phone, email)
+    if (res.type !== "success") {return}
 
     const loan = await prisma.loan.create({
         data: {
             startDate: dateStart,
             endDate: dateEnd,
             status: "Active",
-            borrowerId: borrower.id,
+            borrowerId: res.data.id,
             userId: user.id,
             itemId: unitId
         }

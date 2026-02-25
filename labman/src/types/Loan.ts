@@ -3,6 +3,34 @@
     returnLoan: (id: number) => void;
 }
 
+export type Loan = {
+    id: number;
+    startDate: Date;
+    endDate: Date;
+    status: string;
+
+    borrower: {
+        id: number;
+        name: string;
+        phone?: string | null;
+        email?: string | null
+        note?: string | null
+        creationDate: Date;
+
+    }
+    item: {
+        id: number;
+        equipment: {
+            id: number;
+            name: string;
+            categoryId: number;
+            image: string | null;
+            createdAt: Date;
+
+        }
+    }
+}
+
 type Borrower = {
     id: number;
     name: string;
