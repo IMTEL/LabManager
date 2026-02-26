@@ -6,6 +6,7 @@ import {UserClass} from "@/types/User";
 import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
 import {LoanClass} from "@/types/Loan";
 import EditLoan from "@/components/loans/EditLoan";
+import {useSideView} from "@/app/sideViewContext";
 
 
 type Loans = {
@@ -52,8 +53,9 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const [sideView, setSideView] = useState("");
     const [selectedLoanId, setSelectedLoanId] = useState<number | null>(null);
+
+    const { sideView, setSideView } = useSideView();
 
 
     async function handleSubmit(e: React.FormEvent) {
@@ -125,7 +127,6 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
         <div className={"ml-5 mt-5"}>
             { sideView == "loanEdit" && selectedLoanId && <EditLoan
                 loan={loans.find(loan => loan.id === selectedLoanId)!}
-                setSideView={setSideView}
                 setLoans={setLoans}
 
             />}

@@ -1,5 +1,4 @@
 ﻿"use client"
-import Button from "@/components/core/Button";
 import PathName from "@/components/core/PathName";
 import {logout} from "@/lib/actions";
 
