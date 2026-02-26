@@ -19,7 +19,7 @@ export default function SideView( {children}: {children: JSX.Element}) {
                 <div className="flex flex-1  h-full">
                     {/* Left side of a panel */}
                     <div className="flex-1 rounded-l-lg p-2">
-                        <h1 className="text-5xl font-bold">Title</h1>
+                        <h1 className="text-5xl font-bold">{sideView === "loanEdit" ? "Edit loan" : "Unknown"}</h1>
                         <div className="mt-7 mb-10">
                             {/*
                             <button form="loanDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
@@ -89,7 +89,7 @@ export default function SideView( {children}: {children: JSX.Element}) {
                     {/* Right side of panel */}
                     <div className="flex-1 bg-brand-950 rounded-r-lg p-2">
                         <div className="flex justify-end">
-                            <button className="bg-red-600 w-11 h-11 rounded-full font-bold">X</button>
+                            <button className="bg-red-600 w-11 h-11 rounded-full font-bold" onClick={() => setSideView("")}>X</button>
                         </div>
                         <div className="ml-7 mt-10">
                             {/*<div className="font-bold text-2xl mb-5">
