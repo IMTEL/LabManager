@@ -29,7 +29,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={spartan.variable}>
       <body className="font-spartan h-screen">
-        <SideViewProvider initialValue="">
+        <SideViewProvider initialType="">
             <div className="flex h-screen">
 
                 <aside className="w-73 h-screen">

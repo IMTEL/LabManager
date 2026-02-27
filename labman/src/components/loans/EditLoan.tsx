@@ -73,7 +73,7 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
 
     return(
         <>
-            <SideView>
+            <SideView title={"Edit loan"} equipmentData={loan.item.equipment}>
                 <>
                     <div className="mt-7 mb-10">
                         <button form="loanDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>

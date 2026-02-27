@@ -221,7 +221,22 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
         },
         include: {
             borrower: true,
-            item: { include: { equipment: true }}
+            item: {
+                include: {
+                    equipment: {
+                        include: {
+                            category: true,
+                            items: {
+                                include: {
+                                    loans: true,
+                                    activeLoan: true
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
         }
     })
     revalidatePath("/loans");

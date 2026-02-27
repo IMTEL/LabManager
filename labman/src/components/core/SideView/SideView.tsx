@@ -1,8 +1,15 @@
 ﻿import {JSX} from "react";
+import {Equipment} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
+import ItemList from "@/components/core/SideView/ItemList";
 
+interface SideViewProps {
+    children: JSX.Element;
+    title: string;
+    equipmentData: Equipment;
+}
 
-export default function SideView( {children}: {children: JSX.Element}) {
+export default function SideView( { children, title, equipmentData} : SideViewProps) {
     const {sideView, setSideView} = useSideView();
     return (
         <>
@@ -19,7 +26,7 @@ export default function SideView( {children}: {children: JSX.Element}) {
                 <div className="flex flex-1  h-full">
                     {/* Left side of a panel */}
                     <div className="flex-1 rounded-l-lg p-2">
-                        <h1 className="text-5xl font-bold">{sideView === "loanEdit" ? "Edit loan" : "Unknown"}</h1>
+                        <h1 className="text-5xl font-bold">{title}</h1>
                         <div className="mt-7 mb-10">
                             {/*
                             <button form="loanDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
@@ -66,8 +73,9 @@ export default function SideView( {children}: {children: JSX.Element}) {
                             </form> */}
                         </div>
                         <span>---------------------------------------------------------------------------------------</span>
-                        <h1 className="font-bold text-4xl mt-5 mb-3">Items</h1>
-                        {/*<div className="item-view">
+                        <ItemList equipmentData={equipmentData}></ItemList>
+                        {/*<h1 className="font-bold text-4xl mt-5 mb-3">Items</h1>
+                        <div className="item-view">
                             <div className="mb-10">
                                 {equipmentData.items.map((unit, index) => (
                                     hasActiveLoan = unit.activeLoan != null,

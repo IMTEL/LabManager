@@ -15,12 +15,23 @@ export default async function Loans() {
     }
     const loans = await prisma.loan.findMany({
         include: {
+            borrower: true,
             item: {
                 include: {
-                    equipment: true
+                    equipment: {
+                        include: {
+                            category: true,
+                            items: {
+                                include: {
+                                    loans: true,
+                                    activeLoan: true
+                                }
+                            }
+
+                        }
+                    }
                 }
-            },
-            borrower: true
+            }
         }
     });
 

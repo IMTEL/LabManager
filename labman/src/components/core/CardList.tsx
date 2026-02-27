@@ -7,9 +7,10 @@ import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
 import {LoanClass} from "@/types/Loan";
 import EditLoan from "@/components/loans/EditLoan";
 import {useSideView} from "@/app/sideViewContext";
+import {Loan} from "@/types/Loan";
 
 
-type Loans = {
+/* type Loans = {
     id: number;
     startDate: Date;
     endDate: Date;
@@ -35,9 +36,9 @@ type Loans = {
 
         }
     }
-}[];
+}[]; */
 
-type Loan = Loans[0];
+// type Loan = Loans[0];
 
 interface CardListProps {
     loansProp?: Loan[];
