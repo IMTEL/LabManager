@@ -4,6 +4,7 @@ import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions";
 import {Equipment} from "@/types/inventory";
 import {loanCount} from "@/utils/inventoryUtils";
 import SideView from "@/components/core/SideView/SideView";
+import ItemList from "@/components/core/SideView/ItemList";
 
 type Unit = {
     id: number;
@@ -111,7 +112,7 @@ export default function EquipmentInfo({equipmentData, setAllEquipment, setSelect
     let hasActiveLoan = false;
 
     return (
-        <SideView title={"Equipment info"} equipmentData={equipmentData}>
+        <SideView title={"Equipment info"} equipmentData={equipmentData} itemList={<ItemList equipmentData={equipmentData} variant={"editable"} handleAddUnit={handleAddUnit} handleDeleteUnit={handleDeleteUnit}/>}>
             <>
                 <div className="mt-7 mb-10">
                     <button form="equipmentDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? " bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>

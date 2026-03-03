@@ -23,4 +23,13 @@ export type Equipment = {
     }[]
 }
 
+export type Unit = {
+    id: number;
+    equipmentId: number;
+    status: string;
+    createdAt: Date;
+    notes: string[];
+    errors: string[];
+};
+
 // TODO: Difference between null and undefined and ? means optional

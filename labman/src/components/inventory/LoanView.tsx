@@ -2,17 +2,9 @@
 import {useEffect, useState} from "react";
 import {addLoan} from "@/lib/actions";
 import {Equipment} from "@/types/inventory";
-import {loanCount} from "@/utils/inventoryUtils";
+import {Unit} from "@/types/inventory";
 import SideView from "@/components/core/SideView/SideView"
-
-type Unit = {
-    id: number;
-    equipmentId: number;
-    status: string;
-    createdAt: Date;
-    notes: string[];
-    errors: string[];
-};
+import ItemList from "@/components/core/SideView/ItemList";
 
 type Borrower = {
     id: number;
@@ -79,7 +71,7 @@ export default function LoanView({equipmentData, setAllEquipment, setSelectedEqu
     //TODO: More imrpovements to do on this form and the other forms plus valditation of the form data. Delaying this until the core functionality is done.
 
     return (
-        <SideView title={"Add loan"} equipmentData={equipmentData}>
+        <SideView title={"Add loan"} equipmentData={equipmentData} itemList={<ItemList equipmentData={equipmentData} variant={"selectable"} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />}>
             <>
                 <div className="mt-7 mb-10">
                     <button form="loanDataForm" type="submit" className={"bg-green-500 button mr-2"}>Add Loan</button>

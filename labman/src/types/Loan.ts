@@ -22,6 +22,11 @@ export type Loan = {
     }
     item: {
         id: number;
+        equipmentId: number;
+        status: string;
+        createdAt: Date;
+        notes: string[];
+        errors: string[];
         equipment: Equipment;
     }
 }

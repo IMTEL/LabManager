@@ -4,6 +4,8 @@ import {useEffect, useState} from "react";
 import {updateLoan} from "@/lib/actions";
 import {Loan} from "@/types/Loan";
 import SideView from "@/components/core/SideView/SideView";
+import {Unit} from "@/types/inventory";
+import ItemList from "@/components/core/SideView/ItemList";
 
 
 type Borrower = {
@@ -25,6 +27,8 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
 
     const phoneRequired = formData.borrowerMail?.trim() === "";
     const emailRequired = formData.borrowerPhone?.trim() === "";
+
+    const [selectedUnit, setSelectedUnit] = useState<Unit | undefined>(loan.item);
 
     const [borrowers, setBorrowers] = useState<Borrower[]>([]);
     useEffect(() => {
@@ -73,7 +77,7 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
 
     return(
         <>
-            <SideView title={"Edit loan"} equipmentData={loan.item.equipment}>
+            <SideView title={"Edit loan"} equipmentData={loan.item.equipment} itemList={<ItemList equipmentData={loan.item.equipment} variant={"selectable"} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />}>
                 <>
                     <div className="mt-7 mb-10">
                         <button form="loanDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>

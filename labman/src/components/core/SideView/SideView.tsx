@@ -1,5 +1,5 @@
 ﻿import {JSX} from "react";
-import {Equipment} from "@/types/inventory";
+import {Equipment, Unit} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
 import ItemList from "@/components/core/SideView/ItemList";
 
@@ -7,9 +7,11 @@ interface SideViewProps {
     children: JSX.Element;
     title: string;
     equipmentData: Equipment;
+    itemList?: JSX.Element;
+
 }
 
-export default function SideView( { children, title, equipmentData} : SideViewProps) {
+export default function SideView( { children, title, equipmentData, itemList} : SideViewProps) {
     const {sideView, setSideView} = useSideView();
     return (
         <>
@@ -73,7 +75,9 @@ export default function SideView( { children, title, equipmentData} : SideViewPr
                             </form> */}
                         </div>
                         <span>---------------------------------------------------------------------------------------</span>
-                        <ItemList equipmentData={equipmentData}></ItemList>
+                        {/*selectedUnit && setSelectedUnit ?  <ItemList equipmentData={equipmentData} variant={"selectable"} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit}></ItemList> :
+                        <ItemList equipmentData={equipmentData} variant={"editable"} /> */}
+                        {itemList}
                         {/*<h1 className="font-bold text-4xl mt-5 mb-3">Items</h1>
                         <div className="item-view">
                             <div className="mb-10">
