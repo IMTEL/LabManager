@@ -28,7 +28,7 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
     const phoneRequired = formData.borrowerMail?.trim() === "";
     const emailRequired = formData.borrowerPhone?.trim() === "";
 
-    const [selectedUnit, setSelectedUnit] = useState<Unit | undefined>(loan.item);
+    const [selectedUnit, setSelectedUnit] = useState<Unit>(loan.item);
 
     const [borrowers, setBorrowers] = useState<Borrower[]>([]);
     useEffect(() => {
@@ -56,6 +56,7 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
                 formData.endDate,
                 formData.borrower,
                 loan.borrower.id,
+                selectedUnit.id,
                 formData.borrowerPhone,
                 formData.borrowerMail
             );
@@ -80,8 +81,8 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
             <SideView title={"Edit loan"} equipmentData={loan.item.equipment} itemList={<ItemList equipmentData={loan.item.equipment} variant={"selectable"} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />}>
                 <>
                     <div className="mt-7 mb-10">
-                        <button form="loanDataForm" type="submit" className={ JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
-                        <button onClick={() => {setFormData(initialFormData)}} className={JSON.stringify(formData) === JSON.stringify(initialFormData) ? "bg-yellow-500 button-deactive mr-10" : "bg-yellow-500 button mr-10"}>Undo</button>
+                        <button form="loanDataForm" type="submit" className={ (JSON.stringify(formData) === JSON.stringify(initialFormData) && selectedUnit.id === loan.item.id) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
+                        <button onClick={() => {{setSelectedUnit(loan.item); setFormData(initialFormData)}}} className={(JSON.stringify(formData) === JSON.stringify(initialFormData) && selectedUnit.id === loan.item.id) ? "bg-yellow-500 button-deactive mr-10" : "bg-yellow-500 button mr-10"}>Undo</button>
                         <button className="bg-red-600 button">Cancel</button>
                     </div>
 

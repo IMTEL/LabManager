@@ -204,11 +204,23 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
     return {type: "success", data: borrower};
 }
 
-export async function updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, phone? : string | null, email? : string | null) : Promise<ActionResult<Loan>>  {
+export async function updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, unitId : number, phone? : string | null, email? : string | null) : Promise<ActionResult<Loan>>  {
     if (await getUser() === null) {return {type:"error", message: "Could not find a valid user"}}
 
+    // Check if the loan exists
+    const currentLoan = await prisma.loan.findUnique({where: {id: loanId}})
+    if (!currentLoan) {return {type: "error", message: "Could not find corresponding loan in database"}}
+
+    // Find the connected borrower and update borrower details if needed
     const res = await addBorrower(borrowerName, phone, email, borrowerId)
     if (res.type !== "success") {return {type: "error", message: res.message}}
+
+    // If the user has changed the unit being loaned, check that this is unit is available
+    if (currentLoan.itemId !== unitId) {
+        const newUnit = await prisma.item.findUnique({where: {id: unitId}})
+        if (!newUnit) {return {type: "error", message: "Could not find corresponding unit in database"}}
+        if (newUnit.status !== "Available") {return {type: "error", message: "The selected unit is not available"}}
+    }
 
     const loan = await prisma.loan.update({
         where: {
@@ -217,7 +229,8 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
         data: {
             startDate: start,
             endDate: end,
-            borrowerId: res.data.id
+            borrowerId: res.data.id,
+            itemId: unitId
         },
         include: {
             borrower: true,
