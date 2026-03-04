@@ -21,6 +21,7 @@ type editableProps = BaseProps & {
 
 export default function ItemList(props: Props) {
 
+    // TODO: Is this needed?
     let selectedUnitRef : React.RefObject<number | undefined>
     // The initially selected unit has to persist between renders
     if (props.variant === "selectable") {selectedUnitRef = useRef(props.selectedUnit?.id);}
@@ -34,7 +35,7 @@ export default function ItemList(props: Props) {
                 <div className="mb-10">
                     {props.equipmentData.items.map((unit, index) => (
                         <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
-                                <h1 className="font-bold text-xl text-black">{unit.id}</h1>
+                                <h1 className={ unit.id !== selectedUnitRef.current ? "font-bold text-xl text-black" : "font-bold text-xl text-blue-600"}>{unit.id}</h1>
                                 {(() => {
                                     switch (props.variant) {
                                         case "editable":

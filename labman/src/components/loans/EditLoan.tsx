@@ -50,7 +50,19 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
             return;
         }
         let updatedLoan: Loan;
-        const res = await updateLoan(
+
+        // Will wait for a confirmation from the user before updating the loan
+        // To prevent empty lines in the message it will render a list of strings instead of a single string, and filter out strings that are empty
+        if (confirm(`These changes will be applied:\n${[
+            formData.borrower !== initialFormData.borrower ? `Borrower name: ${initialFormData.borrower} -> ${formData.borrower}` : "",
+            formData.startDate !== initialFormData.startDate ? `Start date: ${initialFormData.startDate.toLocaleDateString()} -> ${formData.startDate.toLocaleDateString()}` : "",
+            formData.endDate !== initialFormData.endDate ? `End date: ${initialFormData.endDate.toLocaleDateString()} -> ${formData.endDate.toLocaleDateString()}` : "",
+            formData.borrowerPhone !== initialFormData.borrowerPhone ? `Borrower phone number: ${initialFormData.borrowerPhone} -> ${formData.borrowerPhone}` : "",
+            formData.borrowerMail !== initialFormData.borrowerMail ? `Borrower email: ${initialFormData.borrowerMail} -> ${formData.borrowerMail}` : "",
+            selectedUnit.id !== loan.item.id ? `Unit ${loan.item.id} -> Borrowed equipment unit: Unit ${selectedUnit.id}` : ""
+        ].filter(Boolean).join("\n")}`)) {
+
+            const res = await updateLoan(
                 loan.id,
                 formData.startDate,
                 formData.endDate,
@@ -60,20 +72,26 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
                 formData.borrowerPhone,
                 formData.borrowerMail
             );
-        console.log(res);
+            console.log(res);
 
-        if (res.type === "error") {
-            alert(res.message);
+            if (res.type === "error") {
+                alert(res.message);
+                return;
+            } else if (res.type === "success") {
+                updatedLoan = res.data;
+            }
+
+            setLoans(prev =>
+                prev.map(loan => loan.id === updatedLoan.id ? updatedLoan : loan)
+
+            )
+            setInitialFormData(formData);
+
+        } else {
             return;
-        } else if (res.type === "success") {
-            updatedLoan = res.data;
         }
 
-        setLoans(prev =>
-            prev.map(loan => loan.id === updatedLoan.id ? updatedLoan : loan)
-            
-        )
-        setInitialFormData(formData);
+
     }
 
     return(

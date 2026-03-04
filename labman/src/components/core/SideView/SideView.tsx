@@ -2,6 +2,7 @@
 import {Equipment, Unit} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
 import ItemList from "@/components/core/SideView/ItemList";
+import {loanCount} from "@/utils/inventoryUtils";
 
 interface SideViewProps {
     children: JSX.Element;
@@ -104,13 +105,13 @@ export default function SideView( { children, title, equipmentData, itemList} : 
                             <button className="bg-red-600 w-11 h-11 rounded-full font-bold" onClick={() => setSideView("")}>X</button>
                         </div>
                         <div className="ml-7 mt-10">
-                            {/*<div className="font-bold text-2xl mb-5">
+                            <div className="font-bold text-2xl mb-5">
                                 <h1>{equipmentData.name}</h1>
                                 <h1>{equipmentData.category.name}</h1>
                                 <h1>{equipmentData.items.length - loanCount(equipmentData)}/{equipmentData.items.length} Available</h1>
-                            </div> */}
+                            </div>
                             <span>----------------------------------------------------------------------------------</span>
-                            <h1 className="font-bold text-4xl mt-5">History</h1>
+                            {/*<h1 className="font-bold text-4xl mt-5">History</h1>*/}
                         </div>
                     </div>
                 </div>
