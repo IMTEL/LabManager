@@ -37,7 +37,7 @@ export default function SideView( { children, title, equipmentData, itemList} : 
                             <button onClick={() => setSideView("")} className="bg-red-600 button">Cancel</button>*/}
                         </div>
 
-                        <div className="mb-25">
+                        <div className="">
                             {children}
                             {/*
                             <form id="loanDataForm">

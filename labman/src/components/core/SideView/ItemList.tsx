@@ -1,5 +1,6 @@
 ﻿import {Equipment, Unit} from "@/types/inventory";
 import {useRef} from "react";
+import {useEffect} from "react";
 
 type BaseProps = {
     equipmentData: Equipment;
@@ -21,10 +22,16 @@ type editableProps = BaseProps & {
 
 export default function ItemList(props: Props) {
 
-    // TODO: Is this needed?
-    let selectedUnitRef : React.RefObject<number | undefined>
-    // The initially selected unit has to persist between renders
-    if (props.variant === "selectable") {selectedUnitRef = useRef(props.selectedUnit?.id);}
+    // The initially selected unit has to persist between renders but uses to useEffect to update when the loan changes
+    let selectedUnitRef : React.RefObject<number | undefined>;
+
+    if (props.variant === "selectable") {
+        selectedUnitRef = useRef(props.selectedUnit?.id);
+
+        useEffect(() => {
+            selectedUnitRef.current = props.selectedUnit?.id;
+        }, [props.equipmentData])
+    }
 
 
     return(
@@ -32,7 +39,7 @@ export default function ItemList(props: Props) {
             <h1 className="font-bold text-4xl mt-5 mb-3">Items</h1>
             <div className="item-view">
                 { props.variant === "editable" && <button className="button bg-green-500 mb-10" onClick={() => props.handleAddUnit(props.equipmentData.name)}>Add unit</button>}
-                <div className="mb-10">
+                <div className="mt-2">
                     {props.equipmentData.items.map((unit, index) => (
                         <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
                                 <h1 className={ unit.id !== selectedUnitRef.current ? "font-bold text-xl text-black" : "font-bold text-xl text-blue-600"}>{unit.id}</h1>
