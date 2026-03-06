@@ -5,6 +5,7 @@ import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
 import {Borrower} from "@/generated/prisma";
 import {Loan} from "@/types/Loan";
+import {redirect} from "next/navigation";
 
 type ActionResult<T> = | { type: "success"; data: T} | { type: "confirm"; message: string} | { type: "error"; message: string}
 
@@ -53,6 +54,7 @@ export async function logout() {
     if (session) {
         await deleteSession(session.id);
     }
+    redirect("/login")
 }
 
 export async function deleteEquipment(name: string) {
@@ -220,6 +222,16 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
         const newUnit = await prisma.item.findUnique({where: {id: unitId}})
         if (!newUnit) {return {type: "error", message: "Could not find corresponding unit in database"}}
         if (newUnit.status !== "Available") {return {type: "error", message: "The selected unit is not available"}}
+
+        await prisma.item.update({
+            where: {id: currentLoan.itemId},
+            data: {status: "Available", activeLoanId: null}
+        })
+
+        await prisma.item.update({
+            where: {id: unitId},
+            data: {status: "Unavailable", activeLoanId: null}
+        })
     }
 
     const loan = await prisma.loan.update({
@@ -308,6 +320,22 @@ export async function getUser() {
 }
 
 export async function deleteLoan(id: number) {
+    const loan = await prisma.loan.findUnique({
+        where: {
+            id: id
+        }
+    })
+    if (!loan) {return}
+
+    await prisma.item.update({
+        where: {
+            activeLoanId: loan.id
+        },
+        data: {
+            status: "Available",
+            activeLoanId: null
+        }
+    })
     await prisma.loan.delete({
         where: {
             id: id
