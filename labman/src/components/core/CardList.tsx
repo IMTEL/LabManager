@@ -1,6 +1,6 @@
 ﻿"use client"
 import Card from "@/components/core/Card";
-import {useState} from "react";
+import {useState, useOptimistic, startTransition} from "react";
 import {User} from "@/generated/prisma";
 import {UserClass} from "@/types/User";
 import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
@@ -8,37 +8,6 @@ import {LoanClass} from "@/types/Loan";
 import EditLoan from "@/components/loans/EditLoan";
 import {useSideView} from "@/app/sideViewContext";
 import {Loan} from "@/types/Loan";
-
-
-/* type Loans = {
-    id: number;
-    startDate: Date;
-    endDate: Date;
-    status: string;
-
-    borrower: {
-        id: number;
-        name: string;
-        phone?: string | null;
-        email?: string | null
-        note?: string | null
-        creationDate: Date;
-
-    }
-    item: {
-        id: number;
-        equipment: {
-            id: number;
-            name: string;
-            categoryId: number;
-            image: string | null;
-            createdAt: Date;
-
-        }
-    }
-}[]; */
-
-// type Loan = Loans[0];
 
 interface CardListProps {
     loansProp?: Loan[];
@@ -50,7 +19,12 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
 
     const [loans, setLoans] = useState<Loan[]>(loansProp);
     const [users, setUsers] = useState<User[]>(usersProp);
-
+    const [optimisticUsers, removeUser] = useOptimistic(
+        users,
+        (currentUsers, idToRemove : number) =>
+        currentUsers.map(user =>
+        user.id === idToRemove ? { ...user, hashedPassword: "deleting" } : user))
+// TODO: Temporary use of password field until I add another alternative
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -75,7 +49,6 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
         const newUser : User = await res.json();
 
         if (newUser) {
-            console.log(newUser)
             setUsername("");
             setPassword("");
             setUsers(prev => [...prev, newUser]);
@@ -86,13 +59,25 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
         }
     }
 
+    async function deleteAction(id: number) {
+        const res = await deleteUser(id);
+        if (res.type === "error") return alert(res.message);
+        setUsers(prev => prev.filter(user => user.id !== id));
+    }
+
    async function handleDeleteUser(userId: number) {
         if (window.confirm("Are you sure you want to delete this user?")) {
-            setUsers(prev => prev.filter(user => user.id !== userId));
-            await deleteUser(userId);
+            // Optimistically remove the user from the UI
+            startTransition(async () => {
+                removeUser(userId)
+                try {
+                    await deleteAction(userId);
+                } catch (e) {
+                    alert("Failed to delete user: " + e);
+                }
+            })
         }
    }
-
 
     const hasReturnedLoans = loans.some(
         (loan) => loan.status === "Returned"
@@ -155,9 +140,10 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
                     )
                     return <Card loan={loan} setSelectedLoanId={setSelectedLoanId} setSideView={setSideView} key={loan.id} />;
                 })}
-                {users.map(userDto => {
+                {optimisticUsers.map(userDto => {
                     const user = new UserClass(
                         userDto.id,
+                        userDto.hashedPassword,
                         userDto.username,
                         userDto.createdAt,
                         userDto.latestActivity,

@@ -9,32 +9,36 @@ import {redirect} from "next/navigation";
 
 type ActionResult<T> = | { type: "success"; data: T} | { type: "confirm"; message: string} | { type: "error"; message: string}
 
-export async function deleteUser(userId : number) {
+// Used to delay the execution of an action for testing purposes
+function delay(ms : number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function deleteUser(userId : number) : Promise<ActionResult<void>> {
+
+    if (await getUser() === null) {
+        return {type: "error", message: "Could not find a valid user"}
+    }
+
+    if (userId === 1) {return {type: "error", message: "Cannot delete admin user"}}
 
     const user = await prisma.user.findUnique({
-        where: {
-            id: userId
-        },
-        include: {
-            sessions: true
-        }
+        where: {id: userId},
+        include: {sessions: true}
     })
 
-
     if (user) {
-        console.log(user.sessions)
         for (const session of user.sessions) {
             await deleteSession(session.id);
         }
     }
 
     await prisma.user.delete({
-        where: {
-            id: userId
-        }
+        where: {id: userId}
     });
 
     revalidatePath("/users");
+    return {type: "success", data: undefined};
 }
 
 export async function getSession() {
@@ -43,34 +47,26 @@ export async function getSession() {
     if (token) {
         return validateSessionToken(token);
     } else {
-        console.log("No active session");
         return null;
     }
 }
 
 export async function logout() {
-    console.log("Logging out");
     const session = await getSession();
-    if (session) {
-        await deleteSession(session.id);
-    }
+    if (session) {await deleteSession(session.id);}
     redirect("/login")
 }
 
 export async function deleteEquipment(name: string) {
     await prisma.equipment.delete({
-        where: {
-            name: name
-        }
+        where: {name: name}
     })
     revalidatePath("/");
 }
 
 export async function deleteUnit(id: number) {
     await prisma.item.delete({
-        where: {
-            id: id
-        }
+        where: {id: id}
     })
     revalidatePath("/");
 }
@@ -78,54 +74,36 @@ export async function deleteUnit(id: number) {
 export async function addUnit(equipmentName: string) {
 
     const equipment = await prisma.equipment.findUnique({
-        where: {
-            name: equipmentName
-        }
+        where: {name: equipmentName}
     })
 
     if (!equipment) {alert("Equipment not found"); return}
 
     const newUnit = await prisma.item.create({
-        data: {
-            equipmentId: equipment.id,
-            status: "Available",
-        },
+        data: {equipmentId: equipment.id, status: "Available",},
         // TODO: Relational properties always have to be specified or else they will not be included in the response
-        include: {
-            loans: true,
-            activeLoan: true
-        }
+        include: {loans: true, activeLoan: true}
 
     })
     revalidatePath("/");
-    console.log("Added unit");
     return newUnit;
 }
 
 export async function updateEquipment (equipmentId: number, name: string, category: string, image: string) {
 
     let categoryId = 0;
-
     let equipmentCategory = await prisma.equipmentCategory.findUnique({where: {name: category}})
 
     if (equipmentCategory) {
-        console.log("Category exists");
         categoryId = equipmentCategory.id
     } else {
-        console.log("Category exists")
         equipmentCategory = await prisma.equipmentCategory.create({data: {name: category}})
         categoryId = equipmentCategory.id
     }
 
     const equipment = await prisma.equipment.update({
-        where: {
-            id: equipmentId,
-        },
-        data : {
-            name: name,
-            categoryId: categoryId,
-            image: image
-        },
+        where: {id: equipmentId},
+        data : {name: name, categoryId: categoryId, image: image},
         include: {category: true}
     })
     revalidatePath("/");
@@ -235,9 +213,7 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
     }
 
     const loan = await prisma.loan.update({
-        where: {
-            id: loanId
-        },
+        where: {id: loanId},
         data: {
             startDate: start,
             endDate: end,
@@ -290,13 +266,8 @@ export async function addLoan (borrowerName : string, start : string, end : stri
     })
 
     await prisma.item.update({
-        where: {
-            id: unitId
-        },
-        data: {
-            status: "Unavailable",
-            activeLoanId: loan.id
-        }
+        where: {id: unitId},
+        data: {status: "Unavailable", activeLoanId: loan.id}
     })
     revalidatePath("/");
     return loan;
@@ -308,9 +279,7 @@ export async function getUser() {
     if (session) {
             const tSession = await prisma.session.findUnique({
                 where: { id: session.id },
-                include: {
-                    user: true
-                }
+                include: {user: true}
             })
             return tSession?.user;
     } else {
@@ -321,20 +290,13 @@ export async function getUser() {
 
 export async function deleteLoan(id: number) {
     const loan = await prisma.loan.findUnique({
-        where: {
-            id: id
-        }
+        where: {id: id}
     })
     if (!loan) {return}
 
     await prisma.item.update({
-        where: {
-            activeLoanId: loan.id
-        },
-        data: {
-            status: "Available",
-            activeLoanId: null
-        }
+        where: {activeLoanId: loan.id},
+        data: {status: "Available", activeLoanId: null}
     })
     await prisma.loan.delete({
         where: {
@@ -345,13 +307,14 @@ export async function deleteLoan(id: number) {
 }
 
 export async function returnLoan(id: number) {
-    await prisma.loan.update({
-        where: {
-            id: id
-        },
-        data: {
-            status: "Returned"
-        }
+   const loan = await prisma.loan.update({
+        where: {id: id},
+        data: {status: "Returned"}
     })
+    await prisma.item.update({
+        where: {activeLoanId: loan.id},
+        data: {status: "Available", activeLoanId: null}
+    })
+
     revalidatePath("/loans");
 }

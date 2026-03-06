@@ -75,7 +75,7 @@ export default function Card({ loan, user, setSelectedLoanId, setSideView }: Car
                         setSelectedLoanId(loan.id);
                     }
                 }}>Edit</button>
-                <button onClick={() => loan ? loan.delete() : user ? user.delete() : alert("Error")} className="button bg-red-600">Delete</button>
+                <button onClick={() => loan ? loan.delete() : user ? user.delete() : alert("Error")} className="button bg-red-600">{user && user.hashedPassword === "deleting" ? "Deleting..." : "Delete" }</button>
                 { loan && loan.status != "Returned" && <button onClick={() => loan.return()} className="button bg-green-500 ml-auto mr-3">Return</button>}
             </div>
         </div>
