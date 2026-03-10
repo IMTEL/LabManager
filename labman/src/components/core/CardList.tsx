@@ -23,7 +23,7 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
         users,
         (currentUsers, idToRemove : number) =>
         currentUsers.map(user =>
-        user.id === idToRemove ? { ...user, hashedPassword: "deleting" } : user))
+        user.id === idToRemove ? { ...user, status: "deleting" } : user))
 // TODO: Temporary use of password field until I add another alternative
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -78,6 +78,8 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
             })
         }
    }
+
+
 
     const hasReturnedLoans = loans.some(
         (loan) => loan.status === "Returned"
@@ -143,13 +145,13 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
                 {optimisticUsers.map(userDto => {
                     const user = new UserClass(
                         userDto.id,
-                        userDto.hashedPassword,
                         userDto.username,
                         userDto.createdAt,
                         userDto.latestActivity,
                         {
                             deleteUser: async (id: number) => handleDeleteUser(id)
-                        }
+                        },
+                        userDto.status
                     )
                    return <Card user={user} key={user.id} />;
                 })}

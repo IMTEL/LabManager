@@ -176,6 +176,7 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
                 name: name,
                 phone: phone,
                 email: email,
+                status: "Active",
                 note: "",
                 creationDate: new Date(),
             }

@@ -5,11 +5,11 @@
 export class UserClass {
     constructor(
         public id: number,
-        public hashedPassword: string,
         public username: string,
         public createdAt: Date,
         public latestActivity: Date,
-        private actions: UserActions
+        private actions: UserActions,
+        public status: string | null
     ) {}
 
 

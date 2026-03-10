@@ -61,7 +61,7 @@ model User {
   username       String    @unique
   createdAt      DateTime  @default(now())
   latestActivity DateTime  @default(now())
-  status         String
+  status         String?
   sessions       Session[]
   loans          Loan[]
 }
