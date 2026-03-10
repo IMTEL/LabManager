@@ -7,6 +7,7 @@ import SortIcon from "@/components/inventory/sortIcon";
 import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 import LoanView from "@/components/inventory/LoanView";
 import {Equipment} from "@/types/inventory";
+import {useSideView} from "@/app/sideViewContext";
 
 
 
@@ -33,7 +34,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     const [image, setImage] = useState("");
 
     const [selectedEquipment, setSelectedEquipment ] = useState<Equipment | null>(null);
-    const [sideView, setSideView] = useState("");
+    const { sideView, setSideView } = useSideView();
 
     const [sort, setSort] = useState<{ column: SortColumn, direction: SortDirection}>({
         column: null,
@@ -119,14 +120,12 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                     { sideView == "eqInfo" && selectedEquipment && <EquipmentInfo
                         equipmentData={selectedEquipment}
-                        setSideView={setSideView}
                         allEquipment={allEquipment}
                         setAllEquipment={setAllEquipment}
                         setSelectedEquipment={setSelectedEquipment}
                         deleteEquipment={handleDeleteEquipment} />}
 
                     { sideView == "loanView" && selectedEquipment && <LoanView
-                        setSideView={setSideView}
                         equipmentData={selectedEquipment}
                         setAllEquipment={setAllEquipment}
                         setSelectedEquipment={setSelectedEquipment} />}

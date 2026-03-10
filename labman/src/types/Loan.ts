@@ -1,6 +1,34 @@
-﻿export type LoanActions = {
+﻿import {Equipment} from "@/types/inventory";
+
+export type LoanActions = {
     deleteLoan: (id: number) => void;
     returnLoan: (id: number) => void;
+}
+
+export type Loan = {
+    id: number;
+    startDate: Date;
+    endDate: Date;
+    status: string;
+
+    borrower: {
+        id: number;
+        name: string;
+        phone?: string | null;
+        email?: string | null
+        note?: string | null
+        creationDate: Date;
+
+    }
+    item: {
+        id: number;
+        equipmentId: number;
+        status: string;
+        createdAt: Date;
+        notes: string[];
+        errors: string[];
+        equipment: Equipment;
+    }
 }
 
 type Borrower = {
@@ -14,14 +42,7 @@ type Borrower = {
 
 type Item = {
     id: number;
-    equipment: {
-        id: number;
-        name: string;
-        categoryId: number;
-        image: string | null;
-        createdAt: Date;
-
-    }
+    equipment: Equipment;
 }
 
 export class LoanClass {

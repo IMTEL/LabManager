@@ -27,6 +27,7 @@ model Equipment {
   name       String            @unique
   image      String?
   createdAt  DateTime          @default(now())
+  status     String
   items      Item[]
   category   EquipmentCategory @relation(fields: [categoryId], references: [id])
 }
@@ -60,6 +61,7 @@ model User {
   username       String    @unique
   createdAt      DateTime  @default(now())
   latestActivity DateTime  @default(now())
+  status         String?
   sessions       Session[]
   loans          Loan[]
 }
@@ -70,6 +72,7 @@ model Borrower {
   phone        String?  @unique
   email        String?  @unique
   note         String?
+  status       String
   creationDate DateTime @default(now())
   loans        Loan[]
 }

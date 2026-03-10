@@ -33,6 +33,7 @@ export async function POST(req: Request) {
             name,
             image,
             categoryId,
+            status: "Active",
             items: {
                 create: {
                     status: "Available"

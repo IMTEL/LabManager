@@ -8,7 +8,8 @@ export class UserClass {
         public username: string,
         public createdAt: Date,
         public latestActivity: Date,
-        private actions: UserActions
+        private actions: UserActions,
+        public status: string | null
     ) {}
 
 

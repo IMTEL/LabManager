@@ -50,9 +50,13 @@ const loan = new LoanClass (
         equipment: {
             id: 1,
             name: "test",
-            categoryId: 1,
             image: "",
             createdAt: new Date(),
+            category: {
+                id: 1,
+                name: "test"
+            },
+            items: []
         }
 
     },
