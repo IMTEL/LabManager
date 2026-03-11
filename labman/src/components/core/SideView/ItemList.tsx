@@ -42,7 +42,7 @@ export default function ItemList(props: Props) {
                 <div className="mt-2">
                     {props.equipmentData.items.map((unit, index) => (
                         <div key={unit.id} className="flex items-center justify-between bg-brand-200 rounded-md p-1 mb-3">
-                                <h1 className={ unit.id !== selectedUnitRef.current ? "font-bold text-xl text-black" : "font-bold text-xl text-blue-600"}>{unit.id}</h1>
+                                <h1 className={ props.variant === "selectable" && unit.id === selectedUnitRef.current ? "font-bold text-xl text-blue-600" : "font-bold text-xl text-black"}>{unit.id}</h1>
                                 {(() => {
                                     switch (props.variant) {
                                         case "editable":

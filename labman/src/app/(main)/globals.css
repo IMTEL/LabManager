@@ -83,7 +83,7 @@ html {
 }
 
 .item-view {
-    @apply bg-brand-950 rounded-md p-3 h-149 overflow-y-auto
+    @apply bg-brand-950 rounded-md p-3 h-155 overflow-y-auto
 }
 
 .side-form-label {
