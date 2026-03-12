@@ -7,6 +7,23 @@ import comparePassword from "@/lib/auth/comparePassword";
 export async function POST(req: Request) {
     const { username, password } = await req.json();
 
+    const users = await prisma.user.findMany();
+    // TODO: Temporary initial user creation. Will create a proper init of the system later
+    if (users.length === 0) {
+        console.log("No existing users, creating new user")
+        const res = await fetch("http://localhost:3000/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        })
+
+    }
+
     const user = await prisma.user.findUnique({where: { username }});
     console.log(user);
     // Check if the user exists

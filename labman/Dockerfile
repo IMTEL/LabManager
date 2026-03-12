@@ -29,17 +29,9 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-ARG DATABASE_URL
-ENV DATABASE_URL=${DATABASE_URL}
-
 RUN npx prisma generate
 
-RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+RUN npm run build;
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -59,6 +51,16 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+COPY --chown=nextjs:nodejs docker-entrypoint.sh .
+# Make sure the entrypoint is in Unix format
+RUN apk add --no-cache dos2unix && \
+   dos2unix docker-entrypoint.sh && \
+   chmod +x docker-entrypoint.sh
+
+RUN npm install -g prisma@6.19.2
+
 USER nextjs
 
 EXPOSE 3000
@@ -68,4 +70,6 @@ ENV PORT=3000
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "server.js"]
