@@ -53,8 +53,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --chown=nextjs:nodejs docker-entrypoint.sh .
-# Convert Windows line endings to Unix line endings and make the entrypoint script executable
-RUN sed -i 's/\r//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
+# Make sure the entrypoint is in Unix format
+RUN apk add --no-cache dos2unix && \
+   dos2unix docker-entrypoint.sh && \
+   chmod +x docker-entrypoint.sh
 
 USER nextjs
 
