@@ -2,6 +2,6 @@
 
 set -e
 
-npx --yes prisma migrate deploy
+prisma migrate deploy
 
 exec "$@"

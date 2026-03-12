@@ -59,6 +59,8 @@ RUN apk add --no-cache dos2unix && \
    dos2unix docker-entrypoint.sh && \
    chmod +x docker-entrypoint.sh
 
+RUN npm install -g prisma@6.19.2
+
 USER nextjs
 
 EXPOSE 3000
