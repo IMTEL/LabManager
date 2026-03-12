@@ -20,7 +20,7 @@ export async function deleteUser(userId : number) : Promise<ActionResult<void>> 
         return {type: "error", message: "Could not find a valid user"}
     }
 
-    if (userId === 1) {return {type: "error", message: "Cannot delete admin user"}}
+   // if (userId === 1) {return {type: "error", message: "Cannot delete admin user"}}
 
     const user = await prisma.user.findUnique({
         where: {id: userId},
