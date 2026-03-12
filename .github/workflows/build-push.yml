@@ -1,16 +1,15 @@
 ﻿name: Build and push docker image to GHCR
 on:
-  push:
-    branches: [ main, prodSetup ]
+  workflow_run:
+    workflows: ["Tests"]
+    types:
+      - completed
+    branches: [main]
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-      attestations: write
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout
