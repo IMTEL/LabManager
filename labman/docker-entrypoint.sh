@@ -2,6 +2,6 @@
 
 set -e
 
-./node_modules/.bin/prisma migrate deploy
+prisma migrate deploy
 
 exec "$@"
