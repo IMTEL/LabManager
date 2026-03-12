@@ -1,14 +1,17 @@
 ﻿services:
   labman:
-    image: ghcr.io/olabekkevold/labman:latest
+    image: ghcr.io/olabekkevold/labmanager:latest
     environment:
       DATABASE_URL:
     ports:
-      - "4000:3000"
+      - "5000:3000"
     restart: "unless-stopped"
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
-    image: postgres
+    image: postgres:18
     restart: always
     # set shared memory limit when using docker compose
     shm_size: 128mb
@@ -24,7 +27,12 @@
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   adminer:
     image: adminer
