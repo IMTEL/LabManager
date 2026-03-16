@@ -4,7 +4,8 @@ import {revalidatePath} from "next/cache";
 import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
 import {Borrower} from "@/generated/prisma";
-import {Loan} from "@/types/Loan";
+import {Loan as ExtendedLoan} from "@/types/Loan";
+import {Loan} from "@/generated/prisma";
 import {redirect} from "next/navigation";
 
 type ActionResult<T> = | { type: "success"; data: T} | { type: "confirm"; message: string} | { type: "error"; message: string}
@@ -153,19 +154,14 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
 
     if (phone) {
         borrower = await prisma.borrower.findUnique({where:{phone: phone}})
-        /* if (borrower && borrower.name !== borrowerName) {
-            if  (window.confirm(`A borrower with the same phone number already exists with a different name (${borrower.name}). Click OK to assign this loan to ${borrowerName}. Click Cancel to assign it to ${borrower.name} instead.`)) {
-                borrower = null;
-            }
-         } */
-
+        if (borrower && borrower.name !== name) {
+            return {type: "error", message: `A borrower with the same phone number already exists (${borrower.name}). Please try again.`}
+        }
     } else if (email)  {
         borrower = await prisma.borrower.findUnique({where:{email: email}})
-        /*if (borrower && borrower.name !== borrowerName) {
-           if  (window.confirm(`A borrower with the same email already exists with a different name (${borrower.name}). Click OK to assign this loan to ${borrowerName}. Click Cancel to assign it to ${borrower.name} instead.`)) {
-               borrower = null;
-           }
-        } */
+        if (borrower && borrower.name !== name) {
+            return {type: "error", message: `A borrower with the same email already exists (${borrower.name}). Please try again.`}
+        }
     } else {
        return {type: "error", message: "No borrower phone/email provided"}
     }
@@ -185,7 +181,7 @@ export async function addBorrower(name: string, phone?: string | null, email?: s
     return {type: "success", data: borrower};
 }
 
-export async function updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, unitId : number, phone? : string | null, email? : string | null) : Promise<ActionResult<Loan>>  {
+export async function  updateLoan (loanId: number, start : Date, end : Date, borrowerName : string, borrowerId : number, unitId : number, phone? : string | null, email? : string | null) : Promise<ActionResult<ExtendedLoan>>  {
     if (await getUser() === null) {return {type:"error", message: "Could not find a valid user"}}
 
     // Check if the loan exists
@@ -246,14 +242,18 @@ export async function updateLoan (loanId: number, start : Date, end : Date, borr
 
 }
 
-export async function addLoan (borrowerName : string, start : string, end : string, unitId : number, phone : string | null, email : string | null) {
+export async function addLoan (borrowerName : string, start : string, end : string, unitId : number, phone : string | null, email : string | null) : Promise<ActionResult<Loan>> {
     const dateStart = new Date(start);
     const dateEnd = new Date(end);
     const user = await getUser();
-    if (!user) {alert("Could not find a valid user"); return}
+    if (!user) {
+        return {type: "error", message: "Could not find a valid user"}
+    }
 
     const res = await addBorrower(borrowerName, phone, email)
-    if (res.type !== "success") {return}
+    if (res.type !== "success") {
+        return {type: "error", message: res.message}
+    }
 
     const loan = await prisma.loan.create({
         data: {
@@ -271,7 +271,7 @@ export async function addLoan (borrowerName : string, start : string, end : stri
         data: {status: "Unavailable", activeLoanId: loan.id}
     })
     revalidatePath("/");
-    return loan;
+    return {type: "success", data: loan};
 }
 
 export async function getUser() {

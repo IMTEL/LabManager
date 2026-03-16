@@ -42,9 +42,13 @@ export default function LoanView({equipmentData, setAllEquipment, setSelectedEqu
             alert("Please fill in all required fields");
             return;
         }
-        const newLoan = await addLoan(formData.borrower, formData.startDate, formData.endDate, selectedUnit.id, formData.borrowerPhone, formData.borrowerEmail);
+        const res = await addLoan(formData.borrower, formData.startDate, formData.endDate, selectedUnit.id, formData.borrowerPhone, formData.borrowerEmail);
 
-        if (!newLoan) return;
+        if (res.type !== "success") {
+            alert(res.message);
+            return;
+        }
+        const newLoan = res.data;
 
         const updatedEquipment = {
             ...equipmentData,
