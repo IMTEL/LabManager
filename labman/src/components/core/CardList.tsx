@@ -112,7 +112,7 @@ export default function CardList({ loansProp = [], usersProp = []}: CardListProp
     }
 
     return (
-        <div className={"ml-5 mt-5"}>
+        <div className={"ml-5 mt-5 mr-5"}>
             { sideView == "loanEdit" && selectedLoanId && <EditLoan
                 loan={loans.find(loan => loan.id === selectedLoanId)!}
                 setLoans={setLoans}

@@ -33,7 +33,7 @@ export default function Card({ loan, user, setSelectedLoanId, setSideView }: Car
     }
 
     return(
-        <div className="bg-brand-950 border-white border-[1px] rounded-[18px] ">
+        <div className="bg-brand-950 border-white border-[1px] rounded-[18px] max-w-[500px] ">
             <div className="border-b-white border-b-[1px] flex gap-2 ">
                 <h1 className="text-3xl font-bold pl-3 pt-2.5 text-nowrap">{name}</h1>
                 {loan && <span className={"mt-3 text-3xl"}>|</span>}
@@ -50,7 +50,7 @@ export default function Card({ loan, user, setSelectedLoanId, setSideView }: Car
 
             {loan && <div className="grid grid-cols-2 grid-rows-2 gap-4">
                 <div className="pl-3 pt-2.5 pb-2.5 w-fit">
-                    <h1 className="text-2xl text-gray-300 font-bold">Equipment: </h1>
+                    <h1 className="card-attributes-value">Equipment: </h1>
                     <p className="text-2xl">{loan.item.equipment.name}</p>
                 </div>
 
@@ -58,12 +58,12 @@ export default function Card({ loan, user, setSelectedLoanId, setSideView }: Car
 
                 <div className="pl-3 pt-2.5 pb-2.5 w-fit">
                     <div className="grid grid-cols-2 grid-rows-3 gap-2">
-                        <h1 className="text-2xl text-gray-300 font-bold">Borrower: </h1>
-                        <h1 className="text-2xl ml-10">{loan.borrower.name}</h1>
-                        <h1 className="text-2xl text-gray-300 font-bold">Start: </h1>
-                        <h1 className="text-2xl ml-10">{start}</h1>
-                        <h1 className="text-2xl text-gray-300 font-bold">End: </h1>
-                        <h1 className="text-2xl ml-10">{last}</h1>
+                        <h1 className="card-attributes-value">Borrower: </h1>
+                        <h1 className="card-attributes" title={loan.borrower.name}>{loan.borrower.name}</h1>
+                        <h1 className="card-attributes-value">Start: </h1>
+                        <h1 className="card-attributes">{start}</h1>
+                        <h1 className="card-attributes-value">End: </h1>
+                        <h1 className="card-attributes">{last}</h1>
                     </div>
                 </div>
             </div>}
