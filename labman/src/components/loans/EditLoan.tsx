@@ -96,7 +96,7 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
 
     return(
         <>
-            <SideView title={"Edit loan"} equipmentData={loan.item.equipment} itemList={<ItemList equipmentData={loan.item.equipment} variant={"selectable"} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />}>
+            <SideView title={"Edit loan"} equipmentData={loan.item.equipment} itemList={<ItemList equipmentData={loan.item.equipment} variant={"selectableEdit"} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} />}>
                 <>
                     <div className="mt-7 mb-10">
                         <button form="loanDataForm" type="submit" className={ (JSON.stringify(formData) === JSON.stringify(initialFormData) && selectedUnit.id === loan.item.id) ? "bg-blue-600 mr-2 button-deactive" : "bg-blue-600 button mr-2"}>Save changes</button>
