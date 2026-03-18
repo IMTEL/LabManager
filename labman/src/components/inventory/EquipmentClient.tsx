@@ -80,14 +80,19 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
             })
         })
         // Adding the new equipment to the state
-        const newEquipment = await res.json();
-        console.log(newEquipment)
+        const result = await res.json();
 
-        setAllEquipment(prev => [...prev, newEquipment]);
-        setName("")
-        setCategory("")
-        setImage("")
+        if (result.type === "success") {
+            const newEquipment = result.data
 
+            setAllEquipment(prev => [...prev, newEquipment]);
+            setName("")
+            setCategory("")
+            setImage("")
+
+        } else {
+            alert(result.message || "Failed to add equipment")
+        }
     }
 
     async function handleDeleteEquipment(name: string) {
