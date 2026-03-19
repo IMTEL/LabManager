@@ -89,7 +89,13 @@ export default function EquipmentInfo({equipmentData, setAllEquipment, setSelect
         if (JSON.stringify(formData) === JSON.stringify(initialFormData)) return;
 
 
-      const updatedEq = await updateEquipment(equipmentData!.id, formData.name!, formData.category!, formData.image!)
+      const res = await updateEquipment(equipmentData.id, formData.name, formData.category, formData.image!)
+      if (res.type !== "success") {
+          alert(res.message);
+          return;
+      }
+
+      const updatedEq = res.data;
 
       const updatedEquipment = {
           ...equipmentData,
@@ -99,7 +105,7 @@ export default function EquipmentInfo({equipmentData, setAllEquipment, setSelect
               name: updatedEq.category.name
           },
           image: updatedEq.image,
-          categoryId: updatedEq.categoryId
+          categoryId: updatedEq.category.id
 
       }
 

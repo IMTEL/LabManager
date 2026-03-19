@@ -4,6 +4,7 @@ import {revalidatePath} from "next/cache";
 import {deleteSession, validateSessionToken} from "@/auth/session"
 import {cookies} from "next/headers";
 import {Borrower} from "@/generated/prisma";
+import {Equipment, EquipmentWithCategoryAndItems} from "@/types/inventory"
 import {Loan as ExtendedLoan} from "@/types/Loan";
 import {Loan} from "@/generated/prisma";
 import {redirect} from "next/navigation";
@@ -90,7 +91,7 @@ export async function addUnit(equipmentName: string) {
     return newUnit;
 }
 
-export async function updateEquipment (equipmentId: number, name: string, category: string, image: string) {
+export async function updateEquipment (equipmentId: number, name: string, category: string, image: string) : Promise<ActionResult<EquipmentWithCategoryAndItems>> {
 
     let categoryId = 0;
     let equipmentCategory = await prisma.equipmentCategory.findUnique({where: {name: category}})
@@ -102,13 +103,22 @@ export async function updateEquipment (equipmentId: number, name: string, catego
         categoryId = equipmentCategory.id
     }
 
+    const existingEquipment = await prisma.equipment.findUnique({where: {name: name}})
+
+    if (existingEquipment) {
+        return {type: "error", message: "Equipment already exists"}
+    }
+
     const equipment = await prisma.equipment.update({
         where: {id: equipmentId},
         data : {name: name, categoryId: categoryId, image: image},
-        include: {category: true}
+        include: {
+            category: true,
+            items: true
+        }
     })
     revalidatePath("/");
-    return equipment;
+    return {type: "success", data: equipment};
 }
 
 export async function addBorrower(name: string, phone?: string | null, email?: string | null, borrowerId?: number) : Promise<ActionResult<Borrower>> {
