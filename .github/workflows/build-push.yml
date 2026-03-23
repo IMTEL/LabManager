@@ -25,12 +25,12 @@ jobs:
       - name: Determine image tag
         id: tag
         run: |
-          if: [ "${{ github.ref }}" == 'refs/heads/main' ]; then
-              echo "env_tag=latest" >> $GITHUB_OUTPUT
-            else
-                echo "env_tag=test" >> $GITHUB_OUTPUT
-            fi
-            ghcr.io/olabekkevold/labmanager:${{ github.sha }}
+          REF="${{ github.ref }}"
+          if [ "$REF" = "refs/heads/main" ]; then
+            echo "env_tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "env_tag=test" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
