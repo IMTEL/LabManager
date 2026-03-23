@@ -4,7 +4,7 @@ on:
     workflows: ["Tests"]
     types:
       - completed
-    branches: [main]
+    branches: [main, test]
 
 jobs:
   build-and-push:
@@ -28,7 +28,11 @@ jobs:
           context: ./labman
           push: true
           tags: |
-            ghcr.io/olabekkevold/labmanager:latest
+            if: [ "${{ github.ref }}" == 'refs/heads/main' ]; then
+              ghcr.io/olabekkevold/labmanager:latest
+            else
+                ghcr.io/olabekkevold/labmanager:test
+            fi
             ghcr.io/olabekkevold/labmanager:${{ github.sha }}
 
 
