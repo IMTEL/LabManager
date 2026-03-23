@@ -10,13 +10,13 @@ test('has title', async ({ page }) => {
  test('login', async ({ page }) => {
   await page.goto('http://localhost:3000/login');
 
-  // Click the get started link.
+
   await page.getByPlaceholder("Username").fill("test");
   await page.getByPlaceholder("Password").fill("1234");
 
   await page.getByRole('button', { name: 'Login' }).click();
 
-  // Expects page to have a heading with the name of Installation.
+
   await expect(page.getByRole('heading', { name: 'Inventory' })).toBeVisible();
 });
 

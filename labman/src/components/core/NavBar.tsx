@@ -1,13 +1,19 @@
-﻿import Button from "@/components/core/Button";
+﻿"use client"
 import PathName from "@/components/core/PathName";
+import {logout} from "@/lib/actions";
 
 export default function NavBar({ username }: { username: string | null }) {
+    async function logoutButton(){
+        await logout();
+
+    }
+
     return(
         <div className="flex justify-between items-center border-b-white border-b-[1px] mb-5">
             < PathName />
             <div className="flex items-center">
                 <div className="mr-8 pt-4">
-                    < Button type="logout" />
+                    <button className={"button bg-red-600"} onClick={logoutButton}>Logout</button>
                 </div>
                 <p className="pr-4 pt-7 font-bold text-2xl">{username || "Not logged in"}</p>
             </div>

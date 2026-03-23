@@ -83,7 +83,7 @@ html {
 }
 
 .item-view {
-    @apply bg-brand-950 rounded-md p-3 h-180 overflow-y-auto
+    @apply bg-brand-950 rounded-md p-3 h-155 overflow-y-auto
 }
 
 .side-form-label {
@@ -101,4 +101,12 @@ input:invalid {
 
 .delete-button {
     @apply text-black font-bold rounded-full h-7 w-7 bg-red-600
+}
+
+.card-attributes {
+    @apply text-2xl ml-10 w-40 truncate
+}
+
+.card-attributes-value {
+    @apply text-2xl text-gray-300 font-bold
 }

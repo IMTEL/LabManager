@@ -7,6 +7,7 @@ import SortIcon from "@/components/inventory/sortIcon";
 import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 import LoanView from "@/components/inventory/LoanView";
 import {Equipment} from "@/types/inventory";
+import {useSideView} from "@/app/sideViewContext";
 
 
 
@@ -33,7 +34,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
     const [image, setImage] = useState("");
 
     const [selectedEquipment, setSelectedEquipment ] = useState<Equipment | null>(null);
-    const [sideView, setSideView] = useState("");
+    const { sideView, setSideView } = useSideView();
 
     const [sort, setSort] = useState<{ column: SortColumn, direction: SortDirection}>({
         column: null,
@@ -64,7 +65,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
     // Adding equipment to the database based on form input
     async function handleSubmit(e: React.FormEvent) {
-        if (!name || !category || !image) return;
+        if (!name || !category) return;
         e.preventDefault();
 
         const res = await fetch("/api/equipment", {
@@ -79,14 +80,19 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
             })
         })
         // Adding the new equipment to the state
-        const newEquipment = await res.json();
-        console.log(newEquipment)
+        const result = await res.json();
 
-        setAllEquipment(prev => [...prev, newEquipment]);
-        setName("")
-        setCategory("")
-        setImage("")
+        if (result.type === "success") {
+            const newEquipment = result.data
 
+            setAllEquipment(prev => [...prev, newEquipment]);
+            setName("")
+            setCategory("")
+            setImage("")
+
+        } else {
+            alert(result.message || "Failed to add equipment")
+        }
     }
 
     async function handleDeleteEquipment(name: string) {
@@ -119,14 +125,12 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
 
                     { sideView == "eqInfo" && selectedEquipment && <EquipmentInfo
                         equipmentData={selectedEquipment}
-                        setSideView={setSideView}
                         allEquipment={allEquipment}
                         setAllEquipment={setAllEquipment}
                         setSelectedEquipment={setSelectedEquipment}
                         deleteEquipment={handleDeleteEquipment} />}
 
                     { sideView == "loanView" && selectedEquipment && <LoanView
-                        setSideView={setSideView}
                         equipmentData={selectedEquipment}
                         setAllEquipment={setAllEquipment}
                         setSelectedEquipment={setSelectedEquipment} />}
@@ -134,8 +138,8 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                     <form onSubmit={handleSubmit}>
                         <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                         <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                        <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                        <button type="submit">Add Equipment</button>
+                        {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
+                        <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
                     </form>
 
                     <div className="grid grid-cols-2 mt-10 mb-5">

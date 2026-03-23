@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { League_Spartan } from "next/font/google";
 import NavBar from "@/components/core/NavBar";
-import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
-import {validateSessionToken} from "@/auth/session";
-import {getSession, getUser} from "@/lib/actions";
+//import {PopupProvider} from "./popupProvider"
+import {getUser} from "@/lib/actions";
 import SideBar from "@/components/core/SideBar";
+import {SideViewProvider} from "@/app/sideViewContext";
 
 const spartan = League_Spartan({
     subsets: ["latin"],
@@ -29,20 +28,20 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={spartan.variable}>
-
       <body className="font-spartan h-screen">
+        <SideViewProvider initialType="">
+            <div className="flex h-screen">
 
-        <div className="flex h-screen">
+                <aside className="w-73 h-screen">
+                    < SideBar />
+                </aside>
 
-            <aside className="w-73 h-screen">
-                < SideBar />
-            </aside>
-
-            <main className="flex-1 overflow-auto">
-                <NavBar username={user?.username ?? "Unknown"} />
-                {children}
-            </main>
-        </div>
+                <main className="flex-1 overflow-auto">
+                    <NavBar username={user?.username ?? "Unknown"} />
+                    {children}
+                </main>
+            </div>
+        </SideViewProvider>
       </body>
     </html>
   );
