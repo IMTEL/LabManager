@@ -31,6 +31,7 @@ jobs:
           else
             echo "env_tag=test" >> $GITHUB_OUTPUT
           fi
+          echo "Image tag: ${{ steps.tag.outputs.env_tag }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
