@@ -24,6 +24,13 @@ jobs:
           username: olabekkevold
           password: ${{ secrets.PAT }}
 
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' ./labman/package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
       - name: Determine image tag
         id: tag
         run: |
@@ -43,5 +50,9 @@ jobs:
           tags: |
             ghcr.io/olabekkevold/labmanager:${{ steps.tag.outputs.env_tag }}
             ghcr.io/olabekkevold/labmanager:${{ github.sha }}
-
-
+          build-args: |
+            NEXT_PUBLIC_VERSION=${{ steps.version.outputs.VERSION }}
+            NEXT_PUBLIC_ENV=${{ steps.tag.outputs.env_tag }}
+            
+            
+            

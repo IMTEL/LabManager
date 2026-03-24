@@ -42,7 +42,7 @@ export default function Home() {
               </form>
             </div>
           </div>
-          <p className={"text-gray-300 text-2xl mb-3 ml-3 fixed bottom-0"}>v1.0.0-test</p>
+          <p className={"text-gray-300 text-2xl mb-3 ml-3 fixed bottom-0"}>{process.env.NEXT_PUBLIC_VERSION}</p>
       </>
 
 
