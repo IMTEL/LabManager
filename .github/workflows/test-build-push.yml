@@ -1,7 +1,7 @@
-name: Tests
+name: Test, Build and Push Docker Image
 on:
   push:
-    branches: [ main, develop, test, 72-change-workflow-structure ]
+    branches: [ main, develop, test ]
   pull_request:
     branches: [ main, develop, test ]
 
