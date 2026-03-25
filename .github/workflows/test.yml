@@ -49,6 +49,9 @@ jobs:
         env:
           NODE_ENV: test
 
+      - name: Install Playwright system dependencies
+        run: npx playwright install-deps
+
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         id: playwright-cache
@@ -62,7 +65,7 @@ jobs:
         env:
           HOME: /root
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps    
+        run: npx playwright install
 
       - name: Run tests
         env:
