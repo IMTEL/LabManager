@@ -102,3 +102,50 @@ jobs:
 
      - name: Run Vitest
        run: npm run test
+
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [vitest, playwright]
+    if: ${{ needs.vitest.result == 'success' && needs.playwright.result == 'success' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test')}}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Log in to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: olabekkevold
+          password: ${{ secrets.PAT }}
+
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' ./labman/package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Determine image tag
+        id: tag
+        run: |
+          
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "env_tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "env_tag=test" >> $GITHUB_OUTPUT
+          fi
+          echo "Image tag: ${{ steps.tag.outputs.env_tag }}"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./labman
+          push: true
+          tags: |
+            ghcr.io/olabekkevold/labmanager:${{ steps.tag.outputs.env_tag }}
+            ghcr.io/olabekkevold/labmanager:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_VERSION=${{ steps.version.outputs.VERSION }}
+            NEXT_PUBLIC_ENV=${{ steps.tag.outputs.env_tag }}     
