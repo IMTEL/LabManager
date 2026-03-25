@@ -1,7 +1,7 @@
 name: Tests
 on:
   push:
-    branches: [ main, develop, test ]
+    branches: [ main, develop, test, 72-change-workflow-structure ]
   pull_request:
     branches: [ main, develop, test ]
 
@@ -48,11 +48,20 @@ jobs:
         run: npx tsx src/lib/db/testDb.ts
         env:
           NODE_ENV: test
-      
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: /root/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
       - name: Install Playwright Browsers
         env:
           HOME: /root
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps    
 
       - name: Run tests
