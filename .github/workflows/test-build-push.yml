@@ -1,0 +1,151 @@
+name: Test, Build and Push Docker Image
+on:
+  push:
+    branches: [ main, develop, test ]
+  pull_request:
+    branches: [ main, develop, test ]
+
+defaults:
+  run:
+    working-directory: ./labman    
+
+jobs:
+
+  playwright:
+
+    runs-on: ubuntu-latest
+    # Docker Hub image
+    container: node:20-bookworm-slim
+
+    # Service containers
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create database
+        run: npm run migrate:test
+
+      - name: Create test user
+        run: npx tsx src/lib/db/testDb.ts
+        env:
+          NODE_ENV: test
+
+      - name: Install Playwright system dependencies
+        run: npx playwright install-deps
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: /root/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Browsers
+        env:
+          HOME: /root
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Run tests
+        env:
+          NODE_ENV: test
+          HOME: /root
+        run: npx playwright test --project=firefox
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+              name: playwright-report
+              path: playwright-report/
+              retention-days: 30
+
+  vitest:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+
+     - uses: actions/setup-node@v4
+       with:
+         node-version: 22
+
+     - name: Install dependencies
+       run:  npm install
+
+     - name: Run Vitest
+       run: npm run test
+
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [vitest, playwright]
+    if: ${{ needs.vitest.result == 'success' && needs.playwright.result == 'success' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test')}}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Log in to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: olabekkevold
+          password: ${{ secrets.PAT }}
+
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' ./package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Determine image tag
+        id: tag
+        run: |
+          
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "env_tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "env_tag=test" >> $GITHUB_OUTPUT
+          fi
+          echo "Image tag: ${{ steps.tag.outputs.env_tag }}"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./labman
+          push: true
+          tags: |
+            ghcr.io/olabekkevold/labmanager:${{ steps.tag.outputs.env_tag }}
+            ghcr.io/olabekkevold/labmanager:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_VERSION=${{ steps.version.outputs.VERSION }}
+            NEXT_PUBLIC_ENV=${{ steps.tag.outputs.env_tag }}     
