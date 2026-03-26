@@ -141,7 +141,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./
+          context: ./labman
           push: true
           tags: |
             ghcr.io/olabekkevold/labmanager:${{ steps.tag.outputs.env_tag }}
