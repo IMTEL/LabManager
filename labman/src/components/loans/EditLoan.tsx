@@ -149,9 +149,9 @@ export default function EditLoan({loan, setLoans}: EditLoanProps) {
                                 min={formData.startDate.toISOString().split("T")[0]}
                                 className="side-form-input"
                                 onChange={(e) => {
-                                    const selected = e.target.value;
-                                    if (selected < formData.startDate.toLocaleDateString()) return;
-                                    setFormData({...formData, endDate: new Date(selected)});
+                                    const selected = new Date(e.target.value);
+                                    if (selected < formData.startDate) return;
+                                    setFormData({...formData, endDate: selected});
 
                                 }}
                             />
