@@ -28,7 +28,7 @@ export default function SideView( { children, title, equipmentData, itemList} : 
                 {/* Vertical split */}
                 <div className="flex flex-1  h-full">
                     {/* Left side of a panel */}
-                    <div className="flex-1 rounded-l-lg p-2">
+                    <div className="flex-1 rounded-l-lg p-2 overflow-y-auto">
                         <h1 className="text-5xl font-bold">{title}</h1>
                         <div className="mt-7 mb-10">
                         </div>
