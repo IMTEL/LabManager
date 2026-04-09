@@ -135,9 +135,9 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                         setAllEquipment={setAllEquipment}
                         setSelectedEquipment={setSelectedEquipment} />}
 
-                    <div className={"mb-13 mt-3"}>
-                        <h1 className={"text-4xl font-bold mb-3"}>Add equipment</h1>
-                        <form onSubmit={handleSubmit}>
+                    <div className={"mb-13 mt-3 p-3 w-fit rounded-md bg-brand-500  border-brand-950"}>
+                        <h1 className={"text-4xl font-bold mb-3 w-fit"}>Add equipment</h1>
+                        <form className={"w-fit"} onSubmit={handleSubmit}>
                             <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                             <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                             {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}

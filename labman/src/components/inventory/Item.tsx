@@ -36,9 +36,9 @@ export default function Item({ equipment, name, category, creationDate, setSelec
             <div className="pt-2 pb-2 pl-3 border-white border-b-[1px]" >
                 <div className="grid grid-cols-4 grid-flow-col auto-cols-max ">
                     <h1 className="font-bold text-2xl mt-2" onClick={() => {setSelectedEquipment(equipment); setSideView("loanView")}}>{name}</h1>
-                    <h1 className="text-2xl mt-2">{category}</h1>
-                    <h1 className="text-2xl mt-2">{equipment.items.length - loanCount(equipment)}/{equipment.items.length}</h1>
-                    <h1 className="text-2xl mt-2">{date.toLocaleDateString("no")}</h1>
+                    <h1 className="text-2xl mt-2 ml-7">{category}</h1>
+                    <h1 className="text-2xl mt-2 ml-16">{equipment.items.length - loanCount(equipment)}/{equipment.items.length}</h1>
+                    <h1 className="text-2xl mt-2 ml-25">{date.toLocaleDateString("no")}</h1>
                     <div className={"grid grid-cols-3"}>
                         <button className={"rounded-button h-9 w-9 bg-green-600 mt-2 mr-2"} onClick={() => {setSelectedEquipment(equipment); setSideView("loanView")}}>
                             <img

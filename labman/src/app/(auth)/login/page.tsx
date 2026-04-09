@@ -45,7 +45,11 @@ export default function Home() {
               </form>
             </div>
           </div>
+
           <p className={"text-gray-300 text-2xl mb-3 ml-3 fixed bottom-0"}>{version}-{env}</p>
+          <a className={"fixed bottom-0 right-1"} target="_blank" href="https://icons8.com">All icons by Icons8</a>
+
+
       </>
 
 
