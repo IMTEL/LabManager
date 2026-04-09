@@ -41,7 +41,7 @@ export default function SideView( { children, title, equipmentData, itemList} : 
                     </div>
 
                     {/* Right side of panel */}
-                    <div className="flex-1 bg-brand-950 rounded-r-lg p-2">
+                    <div className="flex-1 bg-brand-950 rounded-r-lg p-2 overflow-y-auto">
                         <div className="flex justify-end">
 
                             {(sideView === "loanView" || sideView === "eqInfo") &&

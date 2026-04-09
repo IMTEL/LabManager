@@ -110,3 +110,11 @@ input:invalid {
 .card-attributes-value {
     @apply text-2xl text-gray-300 font-bold
 }
+
+.rounded-button {
+    @apply rounded-full hover:cursor-pointer
+}
+
+.rounded-button:hover {
+    @apply brightness-90 transition-all duration-500 scale-105 ease-in-out
+}
