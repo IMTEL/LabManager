@@ -135,12 +135,16 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                         setAllEquipment={setAllEquipment}
                         setSelectedEquipment={setSelectedEquipment} />}
 
-                    <form onSubmit={handleSubmit}>
-                        <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                        <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                        {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
-                        <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
-                    </form>
+                    <div className={"mb-13 mt-3"}>
+                        <h1 className={"text-4xl font-bold mb-3"}>Add equipment</h1>
+                        <form onSubmit={handleSubmit}>
+                            <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                            <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
+                            {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
+                            <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
+                        </form>
+                    </div>
+
 
                     <div className="grid grid-cols-2 mt-10 mb-5">
                         <CategoryButton filters={[...new Set(allEquipment.map((e) => e.category.name))]} selected={selectedFilter} onSelect={setSelectedFilter} />
@@ -165,7 +169,6 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                                 category={equipment.category.name}
                                 creationDate={equipment.createdAt}
                                 setSelectedEquipment={setSelectedEquipment}
-                                setSideView={setSideView}
                                 deleteEquipment={handleDeleteEquipment}
                             />
                         );

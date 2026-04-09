@@ -1,16 +1,17 @@
 ﻿import {useState} from "react";
 import {Equipment} from "@/types/inventory";
+import {useSideView} from "@/app/sideViewContext";
 
 interface EllipsisProps {
     equipment: Equipment;
     setSelectedEquipment: (equipment: Equipment | null) => void;
-    setSideView: (view: string) => void;
     deleteEquipment: (name: string) => void;
 }
 
-export default function Ellipsis({equipment, setSelectedEquipment, setSideView, deleteEquipment}: EllipsisProps) {
+export default function Ellipsis({equipment, setSelectedEquipment, deleteEquipment}: EllipsisProps) {
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
+    const {setSideView} = useSideView();
 // TODO: Find a way to ensure that only one dropdown is open at a time
 
 
