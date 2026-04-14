@@ -8,6 +8,7 @@ import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 import LoanView from "@/components/inventory/LoanView";
 import {Equipment} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
+import SelectionPopup from "@/components/core/SelectionPopup";
 
 
 
@@ -139,10 +140,10 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                         <h1 className={"text-4xl font-bold mb-3 w-fit"}>Add equipment</h1>
                         <form className={"w-fit"} onSubmit={handleSubmit}>
                             <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="Name" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
-                            <input value={category} onChange={(e) => setCategory(e.target.value)} type="text" name="category" placeholder="Category" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" />
                             {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
                             <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
                         </form>
+                        <SelectionPopup categories={[...new Set(allEquipment.map((e) => e.category.name))]} selected={category} onSelect={setCategory} />
                     </div>
 
 
