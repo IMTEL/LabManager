@@ -9,6 +9,7 @@ import LoanView from "@/components/inventory/LoanView";
 import {Equipment} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
 import SelectionPopup from "@/components/core/SelectionPopup";
+import {mistralClient} from "@/lib/mistral";
 
 
 
@@ -116,6 +117,20 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
             return {column: null, direction: null}
         })
     }
+
+   /* async function aiTags(equipment : string) {
+        const messages = [
+        {"role":"user" as const, "content":"metaquest3"}];
+
+        const response = await mistralClient.beta.conversations.start({
+            agentId: 'ag_019d8b49ddbc7315bcc88f9d3df3cfed',
+            agentVersion: 5,
+            inputs: messages
+        })
+
+        console.log(response);
+        console.log(response.outputs)
+    } */
 
     return(
         <>
