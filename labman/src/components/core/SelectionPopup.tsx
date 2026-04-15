@@ -5,9 +5,10 @@ interface SelectionPopupProps {
     categories: string[];
     selected: string;
     onSelect: (selected: string) => void;
+    onAiClick: () => void;
 }
 
-export default function SelectionPopup({ categories, selected, onSelect} : SelectionPopupProps) {
+export default function SelectionPopup({ categories, selected, onSelect, onAiClick} : SelectionPopupProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState(categories);
 
@@ -34,7 +35,7 @@ export default function SelectionPopup({ categories, selected, onSelect} : Selec
                     ))}
                 </ul>
             )}
-            <button className={"bg-blue-300 w-5 h-5"}></button>
+            <button onClick={onAiClick} className={"bg-blue-300 w-5 h-5"}></button>
 
         </div>
 

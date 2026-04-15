@@ -3,9 +3,9 @@ import "./globals.css";
 import { League_Spartan } from "next/font/google";
 import NavBar from "@/components/core/NavBar";
 //import {PopupProvider} from "./popupProvider"
-import {getUser} from "@/lib/actions";
 import SideBar from "@/components/core/SideBar";
 import {SideViewProvider} from "@/app/sideViewContext";
+import {getUser} from "@/lib/actions/userActions";
 
 const spartan = League_Spartan({
     subsets: ["latin"],

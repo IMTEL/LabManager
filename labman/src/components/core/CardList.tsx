@@ -3,11 +3,12 @@ import Card from "@/components/core/Card";
 import {useState, useOptimistic, startTransition} from "react";
 import {User} from "@/generated/prisma";
 import {UserClass} from "@/types/User";
-import {returnLoan, deleteLoan, deleteUser} from "@/lib/actions";
 import {LoanClass} from "@/types/Loan";
 import EditLoan from "@/components/loans/EditLoan";
 import {useSideView} from "@/app/sideViewContext";
 import {Loan} from "@/types/Loan";
+import {deleteUser} from "@/lib/actions/userActions";
+import {deleteLoan, returnLoan} from "@/lib/actions/loanActions";
 
 interface CardListProps {
     loansProp?: Loan[];

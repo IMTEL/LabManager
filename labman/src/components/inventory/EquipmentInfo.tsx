@@ -1,10 +1,10 @@
 ﻿"use client";
 import {useEffect, useState} from "react";
-import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions";
 import {Equipment} from "@/types/inventory";
 import {loanCount} from "@/utils/inventoryUtils";
 import SideView from "@/components/core/SideView/SideView";
 import ItemList from "@/components/core/SideView/ItemList";
+import {addUnit, deleteUnit, updateEquipment} from "@/lib/actions/inventoryActions";
 
 type Unit = {
     id: number;

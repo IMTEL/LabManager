@@ -1,10 +1,10 @@
 ﻿"use client"
 import {useEffect, useState} from "react";
-import {addLoan} from "@/lib/actions";
 import {Equipment} from "@/types/inventory";
 import {Unit} from "@/types/inventory";
 import SideView from "@/components/core/SideView/SideView"
 import ItemList from "@/components/core/SideView/ItemList";
+import {addLoan} from "@/lib/actions/loanActions";
 
 type Borrower = {
     id: number;

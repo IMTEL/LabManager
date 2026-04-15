@@ -1,6 +1,7 @@
 ﻿"use client"
 import PathName from "@/components/core/PathName";
-import {logout} from "@/lib/actions";
+
+import {logout} from "@/lib/actions/userActions";
 
 export default function NavBar({ username }: { username: string | null }) {
     async function logoutButton(){

@@ -1,6 +1,6 @@
 ﻿"use client"
-import { logout } from "@/lib/actions";
 import {redirect} from "next/navigation";
+import {logout} from "@/lib/actions/userActions";
 
 // TODO: Replcace with a html button
 

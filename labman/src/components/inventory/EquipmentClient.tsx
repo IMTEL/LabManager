@@ -2,15 +2,14 @@
 import {useState} from "react";
 import Item from "@/components/inventory/Item";
 import CategoryButton from "@/components/inventory/CategoryButton";
-import {deleteEquipment} from "@/lib/actions";
 import SortIcon from "@/components/inventory/sortIcon";
 import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 import LoanView from "@/components/inventory/LoanView";
 import {Equipment} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
 import SelectionPopup from "@/components/core/SelectionPopup";
-import {mistralClient} from "@/lib/mistral";
-
+import {deleteEquipment} from "@/lib/actions/inventoryActions";
+import {aiCategories} from "@/lib/actions/aiActions"
 
 
 type SortDirection = "asc" | "desc" | null;
@@ -118,19 +117,9 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
         })
     }
 
-   /* async function aiTags(equipment : string) {
-        const messages = [
-        {"role":"user" as const, "content":"metaquest3"}];
-
-        const response = await mistralClient.beta.conversations.start({
-            agentId: 'ag_019d8b49ddbc7315bcc88f9d3df3cfed',
-            agentVersion: 5,
-            inputs: messages
-        })
-
-        console.log(response);
-        console.log(response.outputs)
-    } */
+    async function handleAiCategories() {
+        await aiCategories(name);
+    }
 
     return(
         <>
@@ -158,7 +147,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                             {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
                             <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
                         </form>
-                        <SelectionPopup categories={[...new Set(allEquipment.map((e) => e.category.name))]} selected={category} onSelect={setCategory} />
+                        <SelectionPopup categories={[...new Set(allEquipment.map((e) => e.category.name))]} selected={category} onSelect={setCategory} onAiClick={handleAiCategories} />
                     </div>
 
 
