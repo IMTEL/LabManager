@@ -117,8 +117,14 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
         })
     }
 
-    async function handleAiCategories() {
-        await aiCategories(name);
+    async function handleAiCategories() : Promise<string | string[]> {
+        if (!name) return "Please enter the equipment name first";
+       const response = await aiCategories(name);
+       if (response.type === "success") {
+           return response.data
+       } else {
+           return response.message
+       }
     }
 
     return(
@@ -147,7 +153,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
                             {/* <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="Image" className="bg-white rounded-md p-2 m-2 placeholder-black text-black" /> */}
                             <button type="submit" className={"button bg-green-500"}>Add Equipment</button>
                         </form>
-                        <SelectionPopup categories={[...new Set(allEquipment.map((e) => e.category.name))]} selected={category} onSelect={setCategory} onAiClick={handleAiCategories} />
+                        <SelectionPopup categories={[...new Set(allEquipment.map((e) => e.category.name))]} currentCategory={category} updateCategory={setCategory} onAiClick={handleAiCategories} />
                     </div>
 
 
