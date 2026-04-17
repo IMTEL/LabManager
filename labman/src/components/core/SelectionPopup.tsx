@@ -33,22 +33,30 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
         }
     }
 
+    function handleButtonClick(category: string) {
+        console.log("clicked");
+        updateCategory(category);
+        toggle();
+        inputRef.current!.blur();
+
+    }
+
     return(
 
         <div>
-            <input value={currentCategory} type="text" name="category" placeholder="Category" autoComplete="off" ref={inputRef} className="bg-white rounded-md p-2 m-2 placeholder-black text-black" onFocus={toggle} onChange={(e) => {updateCategory(e.target.value); searchCategories(e.target.value);}} />
+            <input value={currentCategory} type="text" name="category" placeholder="Category" autoComplete="off" ref={inputRef} className="bg-white rounded-md p-2 m-2 placeholder-black text-black" onFocus={toggle} onBlur={toggle}  onChange={(e) => {updateCategory(e.target.value); searchCategories(e.target.value);}} />
 
             {isOpen && (
-                <ul className="filter-dropdown">
+                <ul className="category-dropdown">
                     {(!categories.find((category) => category === currentCategory) && currentCategory.trim() !== "") && (
-                        <li className={"filter-dropdown-item"} onClick={() => {updateCategory(currentCategory); toggle();}}>Create new category: {currentCategory}</li>
+                        <li className={"category-dropdown-item"} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(currentCategory)}}>Create new category: {currentCategory}</li>
                     )}
                     {filteredCategories.map((category) => (
-                        <li key={category} onClick={() => { updateCategory(category); toggle(); }} className={`filter-dropdown-item ${category === currentCategory ? "filter-dropdown-item-selected" : ""}`}>{category}</li>
+                        <li key={category} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(category)}} className={`category-dropdown-item ${category === currentCategory ? "filter-dropdown-item-selected" : ""}`}>{category}</li>
                     ))}
                 </ul>
             )}
-            <button onClick={handleAiClick} className={"bg-blue-300 w-5 h-5"}></button>
+            <button onClick={handleAiClick} className={"bg-blue-300 button"}>Generate Suggestions</button>
 
         </div>
 
