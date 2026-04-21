@@ -13,9 +13,11 @@
     "migrate:test": "dotenv -e .env.test -- npx prisma migrate deploy"
   },
   "dependencies": {
+    "@ai-sdk/mistral": "^3.0.30",
     "@heroicons/react": "^2.2.0",
     "@mistralai/mistralai": "^2.2.0",
     "@prisma/client": "^6.19.2",
+    "ai": "^6.0.168",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "fuse.js": "^7.3.0",
