@@ -53,4 +53,9 @@ export type Unit = {
     errors: string[];
 };
 
+export type CategorySuggestion = {
+    name: string;
+    alreadyExists: boolean;
+}
+
 // TODO: Difference between null and undefined and ? means optional

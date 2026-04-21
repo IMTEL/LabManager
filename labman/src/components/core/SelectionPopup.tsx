@@ -1,16 +1,19 @@
 import {useState, useRef} from "react";
 import search from "@/utils/search"
+import {CategorySuggestion} from "@/types/inventory";
+
 
 interface SelectionPopupProps {
     categories: string[];
     currentCategory: string;
     updateCategory: (currentCategory: string) => void;
-    onAiClick: () => Promise<string[] | string>;
+    onAiClick: () => Promise<CategorySuggestion[] | string>;
 }
 
 export default function SelectionPopup({ categories, currentCategory, updateCategory, onAiClick} : SelectionPopupProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState(categories);
+    const [aiSuggestions, setAiSuggestions] = useState<CategorySuggestion[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const toggle = () => setIsOpen(!isOpen);
@@ -23,13 +26,14 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
     }
 
     async function handleAiClick() {
-        const aiTags = await onAiClick()
-        if (aiTags instanceof Array) {
-            setFilteredCategories(aiTags)
+        const response = await onAiClick()
+        if (response instanceof Array) {
+            setFilteredCategories(response.map(category => category.name));
+            setAiSuggestions(response);
             console.log(filteredCategories);
             inputRef.current!.focus();
         } else {
-            alert(aiTags);
+            alert(response);
         }
     }
 
@@ -39,6 +43,15 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
         toggle();
         inputRef.current!.blur();
 
+    }
+
+    function checkExistence(category: string) : boolean {
+        const suggestion = aiSuggestions.find((suggestion) => suggestion.name === category);
+        if (suggestion && suggestion.alreadyExists) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     return(
@@ -52,7 +65,7 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
                         <li className={"category-dropdown-item"} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(currentCategory)}}>Create new category: {currentCategory}</li>
                     )}
                     {filteredCategories.map((category) => (
-                        <li key={category} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(category)}} className={`category-dropdown-item ${category === currentCategory ? "filter-dropdown-item-selected" : ""}`}>{category}</li>
+                        <li key={category} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(category)}} className={`category-dropdown-item ${category === currentCategory ? "filter-dropdown-item-selected" : ""}`}>{category} {checkExistence(category) ? ":)" : ""}</li>
                     ))}
                 </ul>
             )}

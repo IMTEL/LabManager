@@ -5,7 +5,7 @@ import CategoryButton from "@/components/inventory/CategoryButton";
 import SortIcon from "@/components/inventory/sortIcon";
 import EquipmentInfo from "@/components/inventory/EquipmentInfo";
 import LoanView from "@/components/inventory/LoanView";
-import {Equipment} from "@/types/inventory";
+import {Equipment, CategorySuggestion} from "@/types/inventory";
 import {useSideView} from "@/app/sideViewContext";
 import SelectionPopup from "@/components/core/SelectionPopup";
 import {deleteEquipment} from "@/lib/actions/inventoryActions";
@@ -117,7 +117,7 @@ export default function EquipmentClient({equipmentList}: EquipmentClientProps) {
         })
     }
 
-    async function handleAiCategories() : Promise<string | string[]> {
+    async function handleAiCategories() : Promise<string | CategorySuggestion[]> {
         if (!name) return "Please enter the equipment name first";
        const response = await aiCategories(name);
        if (response.type === "success") {
