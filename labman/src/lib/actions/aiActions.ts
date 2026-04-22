@@ -31,6 +31,9 @@ export async function aiCategories(equipmentName : string) : Promise<ActionResul
             Suggest a list of maximum five most appropriate categories for this item.
             - First look through the provided list of existing categories and find the ones that are the most fitting and add them as a suggestion excaclty as they are written
             - If no fitting categories are found, create suggestions for new categories.
+            - If you are not sure that the category is fitting, do not add it as a suggestion and prefer returning an empty list instead of wrong suggestions.
+            - If you are not able to find five fitting existing categories you can fill the rest of the list by generating new suggestions
+            - Avoid generating suggestions that are just synonyms or alternative ways to write existing categories.
            `
     })
 

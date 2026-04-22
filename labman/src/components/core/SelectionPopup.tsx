@@ -12,6 +12,8 @@ interface SelectionPopupProps {
 
 export default function SelectionPopup({ categories, currentCategory, updateCategory, onAiClick} : SelectionPopupProps) {
     const [isOpen, setIsOpen] = useState(false);
+    // filtered categories and ai suggested categories are separated into two separate arrays, this is because I want categories to be kept as a simple array of strings to be easily comptatible with stuff like searh.
+    // aiSuggestions has the same content but is an array of objects that contains the name of the category and a boolean that indicates if the category already exists, which can be used to identify the status of the suggestion.
     const [filteredCategories, setFilteredCategories] = useState(categories);
     const [aiSuggestions, setAiSuggestions] = useState<CategorySuggestion[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -27,10 +29,10 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
 
     async function handleAiClick() {
         const response = await onAiClick()
+        // If there are no suggestions onAiClick will return a string with a message instead of an array
         if (response instanceof Array) {
             setFilteredCategories(response.map(category => category.name));
             setAiSuggestions(response);
-            console.log(filteredCategories);
             inputRef.current!.focus();
         } else {
             alert(response);
@@ -46,11 +48,12 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
     }
 
     function checkExistence(category: string) : boolean {
+        // The AI is prompted to prefer existing categories but when it suggests a new category, it will be marked as "New" in the dropdown.
         const suggestion = aiSuggestions.find((suggestion) => suggestion.name === category);
-        if (suggestion && suggestion.alreadyExists) {
-            return true;
+        if (suggestion) {
+            return suggestion.alreadyExists;
         } else {
-            return false;
+            return true;
         }
     }
 
@@ -65,7 +68,7 @@ export default function SelectionPopup({ categories, currentCategory, updateCate
                         <li className={"category-dropdown-item"} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(currentCategory)}}>Create new category: {currentCategory}</li>
                     )}
                     {filteredCategories.map((category) => (
-                        <li key={category} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(category)}} className={`category-dropdown-item ${category === currentCategory ? "filter-dropdown-item-selected" : ""}`}>{category} {checkExistence(category) ? ":)" : ""}</li>
+                        <li key={category} onMouseDown={(e) => { e.preventDefault(); handleButtonClick(category)}} className={`category-dropdown-item ${category === currentCategory ? "filter-dropdown-item-selected" : ""}`}>{category} {!checkExistence(category) ? "| New" : ""}</li>
                     ))}
                 </ul>
             )}
