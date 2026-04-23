@@ -1,5 +1,7 @@
 import { convertToModelMessages, streamText, UIMessage } from "ai";
 import { mistral } from "@ai-sdk/mistral";
+import prisma from "@/lib/prisma";
+import {z} from "zod";
 
 export const maxDuration = 30;
 
@@ -14,7 +16,19 @@ export async function POST(req: Request) {
             and doing different tasks based on the users request.
         `,
         messages: await convertToModelMessages(messages),
+        tools: {
+            getAllEquipment: {
+                description: "List the name of all equipment in the inventory",
+                inputSchema: z.object({task : z.string()}),
+                execute: async ({} : {}) => {
+                    const allEquipment = (await prisma.equipment.findMany()).map(equipment => equipment.name);
+                    return allEquipment.join(", ");
+                }
+            }
+        }
     });
+
+    console.log(result);
 
     return result.toUIMessageStreamResponse();
 }
